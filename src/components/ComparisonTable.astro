@@ -1,0 +1,106 @@
+---
+import { getStars } from '../lib/utils';
+import type { Software } from '../lib/types';
+
+interface Props {
+  software: Software[];
+  compact?: boolean;
+}
+
+const { software, compact } = Astro.props;
+const features = Object.keys(software[0]?.features ?? {});
+const featureLabels: Record<string, string> = {
+  violations: 'Violation Tracking',
+  arcRequests: 'ARC Requests',
+  onlinePayments: 'Online Payments',
+  maintenancePortal: 'Maintenance Portal',
+  reserveStudies: 'Reserve Studies',
+  documentManagement: 'Document Management',
+  communication: 'Communication Tools',
+  accounting: 'Native Accounting',
+  mobileApp: 'Mobile App',
+  api: 'API Access',
+  quickbooksSync: 'QuickBooks Sync',
+  bankIntegration: 'Bank Integration',
+  insuranceTracking: 'Insurance Tracking',
+  voting: 'Online Voting',
+  calendar: 'Calendar',
+  workOrders: 'Work Orders',
+  vendorManagement: 'Vendor Management',
+  leaseTracking: 'Lease Tracking',
+  dynamicPricing: 'Dynamic Pricing',
+  channelManagement: 'Channel Management',
+  guestCommunication: 'Guest Communication',
+};
+---
+
+<table class="comparison-table">
+  <thead>
+    <tr>
+      <th>Feature</th>
+      {software.map(s => <th>{s.name}</th>)}
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="pricing-row">
+      <td><strong>Starting Price</strong></td>
+      {software.map(s => <td>${s.pricing.startingPrice}/mo</td>)}
+    </tr>
+    <tr>
+      <td><strong>Free Trial</strong></td>
+      {software.map(s => <td>{s.pricing.freeTrial ? '✅' : '❌'}</td>)}
+    </tr>
+    {features.filter(f => f !== 'quickbooksSync' || compact).map(feature => (
+      <tr>
+        <td>{featureLabels[feature] ?? feature}</td>
+        {software.map(s => <td>{s.features[feature] ? '✅' : '❌'}</td>)}
+      </tr>
+    ))}
+    {!compact && (
+      <>
+        <tr>
+          <td><strong>G2 Rating</strong></td>
+          {software.map(s => <td>{getStars(s.reviews.g2 ?? 0)} {s.reviews.g2}</td>)}
+        </tr>
+        <tr>
+          <td><strong>Year Founded</strong></td>
+          {software.map(s => <td>{s.yearFounded}</td>)}
+        </tr>
+      </>
+    )}
+  </tbody>
+</table>
+
+<style>
+  .comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 0.9rem;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+  .comparison-table th, .comparison-table td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  .comparison-table th {
+    background: #1a1a2e;
+    color: white;
+    font-weight: 600;
+  }
+  .comparison-table th:first-child { background: transparent; color: #1a1a2e; }
+  .comparison-table tr:hover { background: #f0f4ff; }
+  .comparison-table .pricing-row td:first-child { font-weight: 600; }
+  .comparison-table .pricing-row td:not(:first-child) {
+    font-weight: 700;
+    color: #059669;
+  }
+  @media (max-width: 768px) {
+    .comparison-table { font-size: 0.75rem; }
+    .comparison-table th, .comparison-table td { padding: 0.5rem; }
+  }
+</style>

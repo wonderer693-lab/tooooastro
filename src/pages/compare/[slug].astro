@@ -1,0 +1,168 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ComparisonTable from '../../components/ComparisonTable.astro';
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import type { Software } from '../../lib/types';
+import { generateProductSchema, generateSoftwareListSchema } from '../../lib/utils';
+
+export async function getStaticPaths() {
+  const list: [string, string][] = [
+    ['buildium', 'appfolio'], ['buildium', 'hoaware'], ['buildium', 'perfect-hoa'],
+    ['appfolio', 'buildium'], ['appfolio', 'hoaware'],
+    ['hoaware', 'perfect-hoa'], ['hoaware', 'lotwize'],
+    ['perfect-hoa', 'buildium'], ['lotwize', 'buildium'],
+    ['dimora-ai', 'jurny'], ['dimora-ai', 'smoobu'], ['jurny', 'smoobu'],
+  ];
+  const names: Record<string, string> = {
+    buildium: 'Buildium', appfolio: 'AppFolio', hoaware: 'HOAware',
+    'perfect-hoa': 'Perfect HOA', lotwize: 'LotWize',
+    'dimora-ai': 'Dimora AI', jurny: 'Jurny', smoobu: 'Smoobu',
+  };
+  return list.map(([id1, id2]) => ({
+    params: { slug: `${id1}-vs-${id2}` },
+    props: { id1, id2, name1: names[id1] ?? id1, name2: names[id2] ?? id2 },
+  }));
+}
+
+const { id1, id2, name1, name2 } = Astro.props;
+const { default: softwareData } = await import('../../data/software.json');
+const allSoftware = softwareData as Software[];
+const softwareById: Record<string, Software> = {};
+for (const s of allSoftware) softwareById[s.id] = s;
+const s1 = softwareById[id1];
+const s2 = softwareById[id2];
+const softwarePair = [s1, s2].filter(Boolean) as Software[];
+const pageTitle = `${name1} vs ${name2}: Which Property Management Software is Better?`;
+const pageDescription = `Compare ${name1} vs ${name2} side by side. See feature comparisons, pricing, pros & cons, and find out which property management software is right for you.`;
+
+const productSchemas = softwarePair.map(s => generateProductSchema(s));
+const listSchema = generateSoftwareListSchema(softwarePair.map(s => ({
+  name: s.name,
+  url: `https://www.propertymanagepro.com/compare/${id1}-vs-${id2}/`,
+  description: s.tagline,
+})));
+---
+
+<BaseLayout title={pageTitle} description={pageDescription} schema={[...productSchemas, listSchema]}>
+  <div slot="breadcrumbs">
+    <a href="/">Home</a> &raquo; <a href="/">Comparisons</a> &raquo; {s1?.name ?? name1} vs {s2?.name ?? name2}
+  </div>
+
+  <div class="affiliate-disclosure">
+    We may earn commissions if you purchase through our affiliate links. Our comparisons are independent.
+  </div>
+
+  <h1>{pageTitle}</h1>
+
+  <div class="quick-verdict">
+    <h3>Quick Verdict</h3>
+    <p>Choosing between <strong>{s1?.name}</strong> and <strong>{s2?.name}</strong> depends on your specific needs. <strong>{s1?.name}</strong> is ideal for <em>{s1?.idealCustomer ?? 'certain use cases'}</em>, while <strong>{s2?.name}</strong> excels for <em>{s2?.idealCustomer ?? 'other use cases'}</em>. {s1?.pricing.startingPrice && s2?.pricing.startingPrice ? `Pricing starts at $${s1.pricing.startingPrice}/mo vs $${s2.pricing.startingPrice}/mo respectively.` : ''}</p>
+  </div>
+
+  <section>
+    <h2>At a Glance</h2>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+      {softwarePair.map(s => (
+        <div style="background: white; padding: 1.5rem; border-radius: 12px; border: 1px solid #e5e7eb;">
+          <h3>{s.name}</h3>
+          <p style="color: #6b7280; font-size: 0.9rem;">{s.tagline}</p>
+          <table style="font-size: 0.85rem; width: 100%;">
+            <tr><td style="padding: 0.35rem 0; color: #6b7280;">Price</td><td style="font-weight: 600;">${s.pricing.startingPrice}/mo</td></tr>
+            <tr><td style="padding: 0.35rem 0; color: #6b7280;">Best For</td><td>{s.bestFor.join(', ')}</td></tr>
+            <tr><td style="padding: 0.35rem 0; color: #6b7280;">G2 Rating</td><td>{s.reviews.g2 ?? 'N/A'}</td></tr>
+          </table>
+          <div style="margin-top: 1rem;">
+            <AffiliateButton software={s} label={`Visit ${s.name}`} variant="secondary" />
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section>
+    <h2>Feature Comparison</h2>
+    <ComparisonTable software={softwarePair} compact />
+  </section>
+
+  <section>
+    <h2>Pricing Comparison</h2>
+    <table class="comparison-table">
+      <thead>
+        <tr><th>Pricing Factor</th><th>{s1?.name}</th><th>{s2?.name}</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Starting Price</strong></td><td>${s1?.pricing.startingPrice ?? 'N/A'}/mo</td><td>${s2?.pricing.startingPrice ?? 'N/A'}/mo</td></tr>
+        <tr><td><strong>Pricing Model</strong></td><td>{s1?.pricing.pricingModel.replace('-', ' ')}</td><td>{s2?.pricing.pricingModel.replace('-', ' ')}</td></tr>
+        <tr><td><strong>Free Trial</strong></td><td>{s1?.pricing.freeTrial ? '✅ Yes' : '❌ No'}</td><td>{s2?.pricing.freeTrial ? '✅ Yes' : '❌ No'}</td></tr>
+        <tr><td><strong>Free Plan</strong></td><td>{s1?.pricing.freePlan ? '✅ Yes' : '❌ No'}</td><td>{s2?.pricing.freePlan ? '✅ Yes' : '❌ No'}</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>Pros & Cons: {s1?.name} vs {s2?.name}</h2>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+      <div style="background: #ecfdf5; padding: 1.5rem; border-radius: 8px;">
+        <h3 style="color: #059669; margin-top: 0;">{s1?.name} Pros</h3>
+        <ul style="list-style: none; padding: 0;">{s1?.pros.map(p => <li style="padding: 0.35rem 0;">✓ {p}</li>)}</ul>
+      </div>
+      <div style="background: #fef2f2; padding: 1.5rem; border-radius: 8px;">
+        <h3 style="color: #dc2626; margin-top: 0;">{s1?.name} Cons</h3>
+        <ul style="list-style: none; padding: 0;">{s1?.cons.map(c => <li style="padding: 0.35rem 0;">✗ {c}</li>)}</ul>
+      </div>
+      <div style="background: #ecfdf5; padding: 1.5rem; border-radius: 8px;">
+        <h3 style="color: #059669; margin-top: 0;">{s2?.name} Pros</h3>
+        <ul style="list-style: none; padding: 0;">{s2?.pros.map(p => <li style="padding: 0.35rem 0;">✓ {p}</li>)}</ul>
+      </div>
+      <div style="background: #fef2f2; padding: 1.5rem; border-radius: 8px;">
+        <h3 style="color: #dc2626; margin-top: 0;">{s2?.name} Cons</h3>
+        <ul style="list-style: none; padding: 0;">{s2?.cons.map(c => <li style="padding: 0.35rem 0;">✗ {c}</li>)}</ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>When to Choose {s1?.name}</h2>
+    <p>{s1?.idealCustomer}</p>
+    <p>{s1?.name} excels for: {s1?.bestFor.join(', ')}. It supports {s1?.propertyTypes.length} property type(s).</p>
+    <p><strong>Not ideal for:</strong> {s1?.notIdealFor.join(', ')}</p>
+    <AffiliateButton software={s1} label={`Try ${s1?.name}`} />
+
+    <h2>When to Choose {s2?.name}</h2>
+    <p>{s2?.idealCustomer}</p>
+    <p>{s2?.name} excels for: {s2?.bestFor.join(', ')}. It supports {s2?.propertyTypes.length} property type(s).</p>
+    <p><strong>Not ideal for:</strong> {s2?.notIdealFor.join(', ')}</p>
+    <AffiliateButton software={s2} label={`Try ${s2?.name}`} />
+  </section>
+
+  <section>
+    <h2>Final Verdict</h2>
+    <p>Both {s1?.name} and {s2?.name} are solid property management platforms, but they serve different needs. <strong>{s1?.name}</strong> wins for {s1?.idealCustomer?.toLowerCase() ?? 'its target audience'}, while <strong>{s2?.name}</strong> is better for {s2?.idealCustomer?.toLowerCase() ?? 'its target audience'}.</p>
+    <p>Consider your portfolio size, budget, and must-have features when making your decision.</p>
+  </section>
+
+  <section class="faq-section">
+    <h2>FAQ: {s1?.name} vs {s2?.name}</h2>
+    <div class="faq-item">
+      <h4>Which is cheaper: {s1?.name} or {s2?.name}?</h4>
+      <p>{s1?.name} starts at ${s1?.pricing.startingPrice}/mo {s1?.pricing.pricingModel.replace('-', ' ')}, while {s2?.name} starts at ${s2?.pricing.startingPrice}/mo {s2?.pricing.pricingModel.replace('-', ' ')}. {s1?.pricing.startingPrice < (s2?.pricing.startingPrice ?? 9999) ? s1?.name : s2?.name} is more affordable at the base tier.</p>
+    </div>
+    <div class="faq-item">
+      <h4>Which has better reviews?</h4>
+      <p>{s1?.name} has a G2 rating of {s1?.reviews.g2 ?? 'N/A'} and Capterra rating of {s1?.reviews.capterra ?? 'N/A'}. {s2?.name} has a G2 rating of {s2?.reviews.g2 ?? 'N/A'} and Capterra rating of {s2?.reviews.capterra ?? 'N/A'}.</p>
+    </div>
+    <div class="faq-item">
+      <h4>Can I migrate from {s1?.name} to {s2?.name}?</h4>
+      <p>Migration is possible but requires data export and import. Check with each vendor about their migration support and data portability options.</p>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <h3>Try Both Risk-Free</h3>
+    <p>Most property management platforms offer free trials. Test both {s1?.name} and {s2?.name} before making your decision.</p>
+    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+      <a href={s1?.affiliateUrl} target="_blank" rel="nofollow sponsored noopener" class="cta-btn-large">Try {s1?.name}</a>
+      <a href={s2?.affiliateUrl} target="_blank" rel="nofollow sponsored noopener" class="cta-btn-large">Try {s2?.name}</a>
+    </div>
+  </section>
+</BaseLayout>

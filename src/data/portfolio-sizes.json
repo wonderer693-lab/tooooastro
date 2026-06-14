@@ -1,0 +1,140 @@
+[
+  {
+    "id": "micro",
+    "label": "Small Portfolio (<50 units)",
+    "slug": "under-50-units",
+    "minUnits": 1,
+    "maxUnits": 49,
+    "buyerProfile": "Self-managed board volunteers, part-time property managers, individual landlords",
+    "budgetRange": "$0-200/month",
+    "decisionMakers": ["Board president/treasurer", "Single property manager", "Individual owner"],
+    "painPoints": [
+      "No budget for expensive software",
+      "Volunteer burnout from manual processes",
+      "Spreadsheet chaos & version control",
+      "Late payment tracking nightmare",
+      "No resident portal = endless emails",
+      "Compliance anxiety (missing deadlines)"
+    ],
+    "requiredFeatures": [
+      "Online payment collection",
+      "Violation tracking",
+      "Document storage",
+      "Email/communication tools",
+      "Basic financial reports",
+      "Mobile access for volunteers"
+    ]
+  },
+  {
+    "id": "small",
+    "label": "Growing Portfolio (50-200 units)",
+    "slug": "50-200-units",
+    "minUnits": 50,
+    "maxUnits": 199,
+    "buyerProfile": "Professional community association managers, small management companies, active boards",
+    "budgetRange": "$200-800/month",
+    "decisionMakers": ["CAM license holder", "Management company owner", "Board with professional oversight"],
+    "painPoints": [
+      "Outgrowing basic tools",
+      "Multiple communities = context switching",
+      "Manual work order routing",
+      "Owner ledger reconciliation",
+      "Annual meeting prep time-sink",
+      "Vendor management spreadsheet sprawl"
+    ],
+    "requiredFeatures": [
+      "Multi-community dashboard",
+      "Work order management",
+      "Owner/resident portal",
+      "Automated late fees & collections",
+      "Meeting & voting tools",
+      "Vendor portal & insurance tracking",
+      "QuickBooks integration",
+      "Bank lockbox integration"
+    ]
+  },
+  {
+    "id": "medium",
+    "label": "Established Portfolio (200-500 units)",
+    "slug": "200-500-units",
+    "minUnits": 200,
+    "maxUnits": 499,
+    "buyerProfile": "Mid-size management companies, portfolio managers, regional directors",
+    "budgetRange": "$800-2,500/month",
+    "decisionMakers": ["Portfolio manager", "Regional director", "COO/Operations VP"],
+    "painPoints": [
+      "Team collaboration & permissions",
+      "Standardized processes across communities",
+      "Reporting for ownership/investors",
+      "Compliance across jurisdictions",
+      "Scaling onboarding for new communities",
+      "Integration with accounting stack"
+    ],
+    "requiredFeatures": [
+      "Role-based access control",
+      "Template libraries (violations, letters, workflows)",
+      "Advanced reporting & dashboards",
+      "API/integration ecosystem",
+      "Bulk operations",
+      "Reserve study integration",
+      "Mobile app for field staff",
+      "Custom workflow builder"
+    ]
+  },
+  {
+    "id": "large",
+    "label": "Large Portfolio (500-1,000 units)",
+    "slug": "500-1000-units",
+    "minUnits": 500,
+    "maxUnits": 999,
+    "buyerProfile": "Large management companies, institutional owners, REITs",
+    "budgetRange": "$2,500-7,500/month",
+    "decisionMakers": ["VP Operations", "CIO/CTO", "Procurement committee"],
+    "painPoints": [
+      "Enterprise security & SSO",
+      "Custom integrations (ERP, BI tools)",
+      "Multi-state compliance matrix",
+      "Portfolio-wide analytics",
+      "Change management across teams",
+      "Vendor contract management at scale"
+    ],
+    "requiredFeatures": [
+      "SSO/SAML authentication",
+      "Enterprise API rate limits",
+      "Custom integration support",
+      "Dedicated CSM",
+      "SLA guarantees",
+      "Advanced analytics/BI",
+      "Audit trails & compliance reporting",
+      "White-label resident experience"
+    ]
+  },
+  {
+    "id": "enterprise",
+    "label": "Enterprise Portfolio (1,000+ units)",
+    "slug": "1000-plus-units",
+    "minUnits": 1000,
+    "maxUnits": null,
+    "buyerProfile": "National management firms, REITs, institutional investors, private equity",
+    "budgetRange": "$7,500+/month (custom enterprise pricing)",
+    "decisionMakers": ["C-suite", "Procurement", "IT Security", "Legal"],
+    "painPoints": [
+      "Platform consolidation",
+      "Data ownership & portability",
+      "Regulatory audit readiness",
+      "M&A integration speed",
+      "Global portfolio visibility",
+      "Predictive analytics & AI"
+    ],
+    "requiredFeatures": [
+      "Multi-entity/hierarchy support",
+      "Data warehouse access",
+      "AI-powered insights",
+      "Custom development partnership",
+      "Global compliance engine",
+      "Predictive maintenance",
+      "Resident experience platform",
+      "Investor reporting portal"
+    ]
+  }
+]

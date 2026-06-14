@@ -1,17 +1,170 @@
 ---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SoftwareCard from '../components/SoftwareCard.astro';
+import type { Software } from '../lib/types';
+import { generateSoftwareListSchema } from '../lib/utils';
 
+const softwareData = (await import('../data/software.json')).default as Software[];
+const topPicks = softwareData.slice(0, 4);
+const listSchema = generateSoftwareListSchema(topPicks.map(s => ({
+  name: s.name,
+  url: `https://www.propertymanagepro.com/software/${s.slug}/`,
+  description: s.tagline,
+})));
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout title="Best Property Management Software 2026: Expert Reviews & Comparisons" description="Find the best property management software for your portfolio. Expert reviews, feature comparisons, and pricing guides for HOA, condo, STR, and commercial property managers." canonical="https://www.propertymanagepro.com/" schema={listSchema}>
+  <div slot="hero" class="hero" style="padding: 4rem 0;">
+    <div class="wrapper">
+      <h1 style="font-size: 3rem;">Best Property Management Software 2026</h1>
+      <p style="font-size: 1.2rem; max-width: 800px;">Expert reviews, side-by-side comparisons, and buying guides for HOA, condo, vacation rental, commercial, and student housing property management software.</p>
+      <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-top: 1.5rem;">
+        <a href="#top-picks" style="padding: 0.85rem 2rem; background: #059669; color: white; border-radius: 8px; font-weight: 600; text-decoration: none;">See Top Picks</a>
+        <a href="/category/hoa/under-50-units/" style="padding: 0.85rem 2rem; background: rgba(255,255,255,0.15); color: white; border-radius: 8px; font-weight: 600; text-decoration: none;">HOA Software &rarr;</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrapper">
+    <div class="affiliate-disclosure">
+      We may earn commissions if you purchase through our affiliate links. Our reviews are independent and expert-driven.
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 3rem;">
+      <a href="/category/hoa/under-50-units/" style="background: white; padding: 1.25rem; border-radius: 10px; border: 1px solid #e5e7eb; text-align: center; text-decoration: none; transition: all 0.2s;">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🏘️</div>
+        <div style="font-weight: 600; color: #1a1a2e;">HOA</div>
+        <div style="font-size: 0.8rem; color: #6b7280;">Community Assoc.</div>
+      </a>
+      <a href="/category/condo/under-50-units/" style="background: white; padding: 1.25rem; border-radius: 10px; border: 1px solid #e5e7eb; text-align: center; text-decoration: none; transition: all 0.2s;">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🏢</div>
+        <div style="font-weight: 600; color: #1a1a2e;">Condo</div>
+        <div style="font-size: 0.8rem; color: #6b7280;">Association Mgmt</div>
+      </a>
+      <a href="/category/vacation-rental/under-50-units/" style="background: white; padding: 1.25rem; border-radius: 10px; border: 1px solid #e5e7eb; text-align: center; text-decoration: none; transition: all 0.2s;">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🏖️</div>
+        <div style="font-weight: 600; color: #1a1a2e;">Vacation Rental</div>
+        <div style="font-size: 0.8rem; color: #6b7280;">STR Management</div>
+      </a>
+      <a href="/category/commercial/under-50-units/" style="background: white; padding: 1.25rem; border-radius: 10px; border: 1px solid #e5e7eb; text-align: center; text-decoration: none; transition: all 0.2s;">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🏬</div>
+        <div style="font-weight: 600; color: #1a1a2e;">Commercial</div>
+        <div style="font-size: 0.8rem; color: #6b7280;">Office & Retail</div>
+      </a>
+      <a href="/category/student-housing/under-50-units/" style="background: white; padding: 1.25rem; border-radius: 10px; border: 1px solid #e5e7eb; text-align: center; text-decoration: none; transition: all 0.2s;">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🎓</div>
+        <div style="font-weight: 600; color: #1a1a2e;">Student Housing</div>
+        <div style="font-size: 0.8rem; color: #6b7280;">PBSA Management</div>
+      </a>
+      <a href="/category/mobile-home-park/under-50-units/" style="background: white; padding: 1.25rem; border-radius: 10px; border: 1px solid #e5e7eb; text-align: center; text-decoration: none; transition: all 0.2s;">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🏡</div>
+        <div style="font-weight: 600; color: #1a1a2e;">Mobile Home Park</div>
+        <div style="font-size: 0.8rem; color: #6b7280;">MHP Management</div>
+      </a>
+    </div>
+
+    <section id="top-picks" style="margin-bottom: 3rem;">
+      <h2 style="font-size: 1.75rem; margin-bottom: 0.5rem;">Top Picks for 2026</h2>
+      <p style="color: #6b7280; margin-bottom: 1.5rem;">Our expert team evaluates property management software across 22+ criteria. Here are our top recommendations.</p>
+      <div class="software-grid">
+        {topPicks.map(s => <SoftwareCard software={s} />)}
+      </div>
+    </section>
+
+    <section style="margin-bottom: 3rem;">
+      <h2>Compare the Best Property Management Software</h2>
+      <p>Not sure which platform is right for you? Start with your property type and portfolio size:</p>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
+        <div style="background: white; padding: 1.5rem; border-radius: 10px; border: 1px solid #e5e7eb;">
+          <h3 style="font-size: 1.1rem; margin-bottom: 0.75rem;">🏘️ HOA Software Guides</h3>
+          <ul style="list-style: none; padding: 0; font-size: 0.9rem;">
+            <li style="margin-bottom: 0.5rem;">&rarr; <a href="/category/hoa/under-50-units/">Under 50 Units</a></li>
+            <li style="margin-bottom: 0.5rem;">&rarr; <a href="/category/hoa/50-200-units/">50-200 Units</a></li>
+            <li style="margin-bottom: 0.5rem;">&rarr; <a href="/category/hoa/200-500-units/">200-500 Units</a></li>
+            <li style="margin-bottom: 0.5rem;">&rarr; <a href="/category/hoa/500-1000-units/">500-1,000+ Units</a></li>
+          </ul>
+        </div>
+        <div style="background: white; padding: 1.5rem; border-radius: 10px; border: 1px solid #e5e7eb;">
+          <h3 style="font-size: 1.1rem; margin-bottom: 0.75rem;">🏖️ STR Software Guides</h3>
+          <ul style="list-style: none; padding: 0; font-size: 0.9rem;">
+            <li style="margin-bottom: 0.5rem;">&rarr; <a href="/category/vacation-rental/under-50-units/">Under 50 Properties</a></li>
+            <li style="margin-bottom: 0.5rem;">&rarr; <a href="/category/vacation-rental/50-200-units/">50-200 Properties</a></li>
+            <li style="margin-bottom: 0.5rem;">&rarr; <a href="/category/vacation-rental/200-500-units/">200-500 Properties</a></li>
+            <li style="margin-bottom: 0.5rem;">&rarr; <a href="/category/vacation-rental/500-1000-units/">500+ Properties</a></li>
+          </ul>
+        </div>
+        <div style="background: white; padding: 1.5rem; border-radius: 10px; border: 1px solid #e5e7eb;">
+          <h3 style="font-size: 1.1rem; margin-bottom: 0.75rem;">🔀 Popular Comparisons</h3>
+          <ul style="list-style: none; padding: 0; font-size: 0.9rem;">
+            <li style="margin-bottom: 0.5rem;">&rarr; <a href="/compare/buildium-vs-appfolio/">Buildium vs AppFolio</a></li>
+            <li style="margin-bottom: 0.5rem;">&rarr; <a href="/compare/buildium-vs-hoaware/">Buildium vs HOAware</a></li>
+            <li style="margin-bottom: 0.5rem;">&rarr; <a href="/compare/hoaware-vs-perfect-hoa/">HOAware vs Perfect HOA</a></li>
+            <li style="margin-bottom: 0.5rem;">&rarr; <a href="/compare/dimora-ai-vs-jurny/">Dimora AI vs Jurny</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-bottom: 3rem;">
+      <h2>Why Trust Our Reviews?</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem;">
+        <div style="background: white; padding: 1.5rem; border-radius: 10px; border: 1px solid #e5e7eb;">
+          <h3 style="font-size: 1.1rem; color: #059669;">Expert Analysis</h3>
+          <p style="font-size: 0.9rem; color: #6b7280;">Our team has 15+ years of combined experience in property management technology. We test each platform against 22+ criteria.</p>
+        </div>
+        <div style="background: white; padding: 1.5rem; border-radius: 10px; border: 1px solid #e5e7eb;">
+          <h3 style="font-size: 1.1rem; color: #059669;">Unbiased Comparisons</h3>
+          <p style="font-size: 0.9rem; color: #6b7280;">We recommend based on merit, not commissions. Our rankings consider features, pricing, support, and user reviews from G2 and Capterra.</p>
+        </div>
+        <div style="background: white; padding: 1.5rem; border-radius: 10px; border: 1px solid #e5e7eb;">
+          <h3 style="font-size: 1.1rem; color: #059669;">Always Current</h3>
+          <p style="font-size: 0.9rem; color: #6b7280;">We update our reviews quarterly to reflect pricing changes, new features, and market trends. 2026 data is current as of June 2026.</p>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-bottom: 3rem;">
+      <h2>State Compliance Guides</h2>
+      <p>Find HOA software that meets your state's specific regulatory requirements.</p>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem; margin-top: 1rem;">
+        <a href="/state/california/" style="background: white; padding: 0.75rem; border-radius: 6px; border: 1px solid #e5e7eb; text-align: center; font-size: 0.9rem; text-decoration: none;">California</a>
+        <a href="/state/florida/" style="background: white; padding: 0.75rem; border-radius: 6px; border: 1px solid #e5e7eb; text-align: center; font-size: 0.9rem; text-decoration: none;">Florida</a>
+        <a href="/state/texas/" style="background: white; padding: 0.75rem; border-radius: 6px; border: 1px solid #e5e7eb; text-align: center; font-size: 0.9rem; text-decoration: none;">Texas</a>
+        <a href="/state/new-york/" style="background: white; padding: 0.75rem; border-radius: 6px; border: 1px solid #e5e7eb; text-align: center; font-size: 0.9rem; text-decoration: none;">New York</a>
+        <a href="/state/illinois/" style="background: white; padding: 0.75rem; border-radius: 6px; border: 1px solid #e5e7eb; text-align: center; font-size: 0.9rem; text-decoration: none;">Illinois</a>
+        <a href="/state/virginia/" style="background: white; padding: 0.75rem; border-radius: 6px; border: 1px solid #e5e7eb; text-align: center; font-size: 0.9rem; text-decoration: none;">Virginia</a>
+      </div>
+      <p style="margin-top: 1rem; font-size: 0.9rem;"><a href="/state/california/">View all 50 state guides &rarr;</a></p>
+    </section>
+
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-item">
+        <h4>What is the best property management software overall?</h4>
+        <p>Buildium is our top pick for most property managers, offering the best balance of features, pricing, and support for HOA, condo, and commercial management. For self-managed associations, HOAware is the best value with lifetime recurring affiliate commissions.</p>
+      </div>
+      <div class="faq-item">
+        <h4>How much does property management software cost?</h4>
+        <p>Pricing ranges from $19/month (Smoobu) to $375+/month (Buildium premium) depending on portfolio size and features. Most platforms charge per unit or per user.</p>
+      </div>
+      <div class="faq-item">
+        <h4>What features should I look for?</h4>
+        <p>Essential features include: online payments, violation tracking, document management, maintenance/work orders, accounting integration, and resident/owner portals. Choose based on your property type and portfolio size.</p>
+      </div>
+      <div class="faq-item">
+        <h4>Do I need specialized software for my property type?</h4>
+        <p>Yes. HOA/condo software needs violation tracking and ARC requests. STR software needs channel management and dynamic pricing. Commercial software needs CAM reconciliation. Choose a platform that matches your property type.</p>
+      </div>
+    </section>
+
+    <section class="cta-section">
+      <h3>Get Started Today</h3>
+      <p>Find the perfect property management software for your portfolio. Start with a free trial.</p>
+      <a href="/category/hoa/under-50-units/" class="cta-btn-large">Compare HOA Software &rarr;</a>
+    </section>
+
+    <div class="disclosure">
+      <strong>Affiliate Disclosure:</strong> PropertyManagePro is reader-supported. When you click through links on our site and make a purchase, we may earn a commission. Our reviews are based on independent research.
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,34 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import type { Software } from '../../lib/types';
+
+const { default: softwareData } = await import('../../data/software.json');
+const software = softwareData as Software[];
+---
+
+<BaseLayout title="Property Management Software Reviews & Comparisons | PropertyManagePro" description="Read in-depth reviews of the best property management software. Compare features, pricing, pros & cons, and find the right platform for your portfolio." canonical="https://www.propertymanagepro.com/software/">
+  <h1>Property Management Software Reviews</h1>
+  <p>Read our in-depth reviews of the top property management platforms. Each review covers features, pricing, pros & cons, and ideal use cases.</p>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+    {software.map(s => (
+      <a href={`/software/${s.slug}/`} style="background: white; padding: 1.5rem; border-radius: 12px; border: 1px solid #e5e7eb; text-decoration: none; transition: all 0.2s; display: block;">
+        <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem;">
+          <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #1a1a2e, #2563eb); color: white; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.25rem; flex-shrink: 0;">{s.name.charAt(0)}</div>
+          <div>
+            <h2 style="font-size: 1.2rem; color: #1a1a2e; margin: 0;">{s.name}</h2>
+            <p style="font-size: 0.85rem; color: #6b7280; margin: 0;">{s.tagline}</p>
+          </div>
+        </div>
+        <div style="font-size: 0.9rem; color: #374151; margin-bottom: 0.5rem;">
+          <strong>Best for:</strong> {s.idealCustomer}
+        </div>
+        <div style="font-size: 0.9rem; color: #374151;">
+          <strong>Price:</strong> ${s.pricing.startingPrice}/mo | 
+          <strong>G2:</strong> {s.reviews.g2 ?? 'N/A'}
+        </div>
+        <span style="color: #2563eb; font-weight: 600; font-size: 0.9rem; display: inline-block; margin-top: 0.75rem;">Read Full Review &rarr;</span>
+      </a>
+    ))}
+  </div>
+</BaseLayout>

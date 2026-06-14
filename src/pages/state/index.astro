@@ -1,0 +1,32 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import type { State } from '../../lib/types';
+
+const { default: statesData } = await import('../../data/states.json');
+const states = statesData as State[];
+---
+
+<BaseLayout title="Best Property Management Software by State | Compliance Guides" description="Find HOA software that meets your state's specific compliance requirements. Browse state-by-state guides for property management software tailored to local laws." canonical="https://www.propertymanagepro.com/state/">
+  <h1>HOA Software Compliance Guides by State</h1>
+  <p>Each state has unique requirements for HOA, condo, and property management. Find software that keeps your association compliant with state-specific laws.</p>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.75rem; margin-top: 2rem;">
+    {states.map(st => (
+      <a href={`/state/${st.slug}/`} style="background: white; padding: 1rem; border-radius: 8px; border: 1px solid #e5e7eb; text-align: center; text-decoration: none; font-weight: 500; color: #1a1a2e; transition: all 0.2s;">
+        <div style="font-size: 0.8rem; color: #6b7280; margin-bottom: 0.25rem;">{st.code}</div>
+        <div>{st.name}</div>
+      </a>
+    ))}
+  </div>
+
+  <div style="margin-top: 2rem; padding: 1.5rem; background: #eff6ff; border-radius: 8px;">
+    <h3>High Priority States</h3>
+    <p>States with the most active HOA litigation and complex compliance requirements:</p>
+    <ul>
+      <li><strong><a href="/state/california/">California</a></strong> — Davis-Stirling Act, mandatory reserve studies</li>
+      <li><strong><a href="/state/florida/">Florida</a></strong> — Condominium Act, full reserve funding required</li>
+      <li><strong><a href="/state/new-york/">New York</a></strong> — 10% budget to reserves, management licensing</li>
+      <li><strong><a href="/state/texas/">Texas</a></strong> — Property Code Chapter 209, no reserve requirements</li>
+    </ul>
+  </div>
+</BaseLayout>

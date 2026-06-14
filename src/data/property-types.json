@@ -1,0 +1,232 @@
+[
+  {
+    "id": "hoa",
+    "name": "HOA / Community Association",
+    "slug": "hoa",
+    "description": "Homeowners associations and community associations managing common areas, enforcement, and resident communication for single-family, townhome, and condo communities.",
+    "icon": "🏘️",
+    "keywords": [
+      "hoa management software",
+      "community association software",
+      "hoa violation tracking",
+      "arc request software",
+      "hoa reserve study software",
+      "self managed hoa software"
+    ],
+    "buyerPersonas": [
+      "Volunteer board members (president, treasurer, secretary)",
+      "Professional community association managers (CAM)",
+      "Management company portfolio managers"
+    ],
+    "workflows": [
+      "Violation tracking & enforcement",
+      "Architectural review (ARC) requests",
+      "Reserve study management",
+      "Annual meeting & voting",
+      "Assessment collection & late fees",
+      "Vendor/contractor management",
+      "Document storage & governing docs",
+      "Resident communication portal"
+    ],
+    "complianceKeywords": [
+      "state hoa laws",
+      "governing documents compliance",
+      "fair housing act",
+      "reserve funding requirements",
+      "meeting notice requirements",
+      "voting quorum rules"
+    ],
+    "avgPortfolioSize": "50-500 units",
+    "seasonality": "Peak: Spring (annual meetings), Fall (budget season)"
+  },
+  {
+    "id": "condo",
+    "name": "Condominium Association",
+    "slug": "condo",
+    "description": "Condominium associations with shared ownership structures, master insurance, and unique common element management requirements.",
+    "icon": "🏢",
+    "keywords": [
+      "condo association management software",
+      "condominium management system",
+      "condo reserve fund software",
+      "master insurance tracking",
+      "condo special assessment software"
+    ],
+    "buyerPersonas": [
+      "Condo board directors",
+      "Property managers specializing in condos",
+      "Management company condo portfolio managers"
+    ],
+    "workflows": [
+      "Master insurance policy tracking",
+      "Common element maintenance schedules",
+      "Special assessment management",
+      "Unit owner ledger & fee allocation",
+      "Parking & storage allocation",
+      "Pet & rental restriction enforcement",
+      "Elevator & mechanical systems tracking"
+    ],
+    "complianceKeywords": [
+      "condominium act compliance",
+      "master insurance requirements",
+      "reserve study mandates",
+      "unit boundary definitions",
+      "common element percentages"
+    ],
+    "avgPortfolioSize": "20-300 units",
+    "seasonality": "Consistent year-round, budget peaks in Q4"
+  },
+  {
+    "id": "str",
+    "name": "Vacation Rental / Short-Term Rental",
+    "slug": "vacation-rental",
+    "description": "Short-term rental property managers handling multi-channel distribution, dynamic pricing, guest communication, and turnover operations.",
+    "icon": "🏖️",
+    "keywords": [
+      "vacation rental management software",
+      "short term rental property management",
+      "airbnb property management software",
+      "channel manager software",
+      "dynamic pricing software vacation rental",
+      "guest communication automation"
+    ],
+    "buyerPersonas": [
+      "Professional STR property managers",
+      "Individual owners with 5+ listings",
+      "Real estate investors scaling STR portfolios"
+    ],
+    "workflows": [
+      "Multi-channel calendar sync (Airbnb, VRBO, Booking.com)",
+      "Dynamic pricing & revenue management",
+      "Automated guest messaging (pre-arrival, during, post-stay)",
+      "Cleaning & maintenance turnover scheduling",
+      "Keyless entry & smart lock integration",
+      "Review management & response",
+      "Owner statements & distribution",
+      "Tax compliance & occupancy reporting"
+    ],
+    "complianceKeywords": [
+      "short term rental regulations",
+      "occupancy tax compliance",
+      "zoning permits",
+      "hoa str restrictions",
+      "insurance requirements str"
+    ],
+    "avgPortfolioSize": "5-200 properties",
+    "seasonality": "High: Summer/holidays; Low: Shoulder seasons (varies by market)"
+  },
+  {
+    "id": "commercial",
+    "name": "Commercial Property Management",
+    "slug": "commercial",
+    "description": "Commercial property managers handling office, retail, industrial, and mixed-use portfolios with complex lease structures and CAM reconciliation.",
+    "icon": "🏬",
+    "keywords": [
+      "commercial property management software",
+      "commercial lease management software",
+      "cam reconciliation software",
+      "tenant portal commercial real estate",
+      "property accounting software commercial"
+    ],
+    "buyerPersonas": [
+      "Commercial property managers",
+      "Asset managers",
+      "Property management firms (commercial division)",
+      "REIT portfolio managers"
+    ],
+    "workflows": [
+      "Complex lease administration (NNN, gross, modified gross)",
+      "CAM reconciliation & expense recovery",
+      "Tenant improvement tracking",
+      "Rent roll management",
+      "Lease abstract & critical date tracking",
+      "Work order & preventive maintenance",
+      "Financial reporting & owner statements",
+      "Vendor compliance & insurance tracking"
+    ],
+    "complianceKeywords": [
+      "fasb lease accounting (asc 842)",
+      "cam audit rights",
+      "ada compliance",
+      "environmental regulations",
+      "fire/life safety codes"
+    ],
+    "avgPortfolioSize": "100,000-5M+ sq ft",
+    "seasonality": "Quarterly CAM recs, year-end financials"
+  },
+  {
+    "id": "student-housing",
+    "name": "Student Housing",
+    "slug": "student-housing",
+    "description": "Purpose-built student housing operators managing high-turnover leases, roommate matching, parental guarantors, and academic calendar alignment.",
+    "icon": "🎓",
+    "keywords": [
+      "student housing management software",
+      "student housing property management",
+      "roommate matching software",
+      "academic calendar lease software",
+      "parent portal student housing"
+    ],
+    "buyerPersonas": [
+      "Student housing operators",
+      "University-affiliated housing managers",
+      "Private student housing REITs"
+    ],
+    "workflows": [
+      "Academic calendar lease terms (9/12 month)",
+      "Roommate matching & compatibility",
+      "Parental guarantor workflows",
+      "Move-in/move-out coordination (mass turnover)",
+      "Package management (high volume)",
+      "Amenity reservation systems",
+      "Resident engagement & events",
+      "Summer conference/short-term leasing"
+    ],
+    "complianceKeywords": [
+      "fair housing act student exemptions",
+      "ferpa considerations",
+      "title ix implications",
+      "local occupancy ordinances"
+    ],
+    "avgPortfolioSize": "200-2000+ beds",
+    "seasonality": "Extreme: June-August turnover (60-80% annual)"
+  },
+  {
+    "id": "mobile-home-park",
+    "name": "Mobile Home / Manufactured Housing Community",
+    "slug": "mobile-home-park",
+    "description": "Manufactured housing community operators managing lot rentals, home sales, infrastructure maintenance, and unique regulatory frameworks.",
+    "icon": "🏡",
+    "keywords": [
+      "mobile home park management software",
+      "manufactured housing community software",
+      "mhp management system",
+      "lot rent management software",
+      "mobile home park compliance software"
+    ],
+    "buyerPersonas": [
+      "MHP owner/operators",
+      "Institutional MHP investors (REITs, private equity)",
+      "Regional management companies"
+    ],
+    "workflows": [
+      "Lot rent collection & increases",
+      "Home sale/transfer approval process",
+      "Infrastructure maintenance (water, sewer, electric, roads)",
+      "Resident screening & background checks",
+      "Community rule enforcement",
+      "Capital improvement planning",
+      "Rent control compliance (where applicable)",
+      "Home inventory & titling tracking"
+    ],
+    "complianceKeywords": [
+      "mobile home residency law",
+      "rent control ordinances",
+      "infrastructure regulations",
+      "home installation standards",
+      "resident relocation protections"
+    ],
+    "avgPortfolioSize": "50-500+ sites",
+    "seasonality": "Moderate: Spring/summer home sales activity"
+  }
+]

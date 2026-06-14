@@ -1,0 +1,150 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import type { State, Software } from '../../lib/types';
+
+export async function getStaticPaths() {
+  const { default: statesData } = await import('../../data/states.json');
+  const { default: softwareData } = await import('../../data/software.json');
+  const software = softwareData as Software[];
+
+  const paths: { params: { slug: string }; props: { state: State; software: Software[] } }[] = [];
+
+  for (const st of statesData as State[]) {
+    const relevantSoftware = software.filter(s => st.popularSoftware.some(ps => s.name.toLowerCase().includes(ps.toLowerCase())));
+    paths.push({
+      params: { slug: st.slug },
+      props: { state: st as State, software: relevantSoftware },
+    });
+  }
+  return paths;
+}
+
+const { state, software } = Astro.props;
+const pageTitle = `Best HOA Software for ${state.name} 2026: ${state.hoaLaws.slice(0, 2).join(' & ')} Compliance`;
+const pageDescription = `Find the best HOA management software for ${state.name}. Compare tools that handle ${state.hoaLaws.slice(0, 2).join(', ')} compliance, ${state.reserveRequirements.toLowerCase()}, and ${state.meetingRequirements.toLowerCase()}.`;
+---
+
+<BaseLayout title={pageTitle} description={pageDescription} canonical={`https://www.propertymanagepro.com/state/${state.slug}/`}>
+  <div slot="breadcrumbs">
+    <a href="/">Home</a> &raquo; <a href="/">State Guides</a> &raquo; {state.name}
+  </div>
+
+  <div class="affiliate-disclosure">
+    We may earn commissions if you purchase through our affiliate links.
+  </div>
+
+  <h1>{pageTitle}</h1>
+
+  <div class="quick-verdict">
+    <h3>{state.name} HOA Compliance at a Glance</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
+      <div style="background: white; padding: 1rem; border-radius: 8px;">
+        <strong>Avg HOA Fees</strong><br />
+        <span style="font-size: 1.5rem; font-weight: 700; color: #059669;">{state.avgHoaFees}</span>
+      </div>
+      <div style="background: white; padding: 1rem; border-radius: 8px;">
+        <strong>Litigation Risk</strong><br />
+        <span style="font-size: 1.1rem; font-weight: 600; color: {state.litigationRisk === 'high' ? '#dc2626' : state.litigationRisk === 'medium' ? '#d97706' : '#059669'};">{state.litigationRisk === 'high' ? '🔴 High' : state.litigationRisk === 'medium' ? '🟡 Medium' : '🟢 Low'}</span>
+      </div>
+      <div style="background: white; padding: 1rem; border-radius: 8px;">
+        <strong>Mgmt License Required</strong><br />
+        <span style="font-size: 1.1rem; font-weight: 600;">{state.managementLicenseRequired ? '✅ Yes' : '❌ No'}</span>
+      </div>
+    </div>
+  </div>
+
+  <section>
+    <h2>{state.name} HOA Laws & Regulations</h2>
+    <p>{state.name} associations operate under {state.hoaLaws.join(' and ')}. Key statutes include {state.keyStatutes.join(', ')}.</p>
+
+    <h3>Key Compliance Requirements</h3>
+    <ul>
+      <li><strong>Reserve Requirements:</strong> {state.reserveRequirements}</li>
+      <li><strong>Meeting Requirements:</strong> {state.meetingRequirements}</li>
+      <li><strong>Voting Thresholds:</strong> {state.votingThresholds}</li>
+      <li><strong>Management Licensing:</strong> {state.managementLicenseRequired ? 'State license required for community association managers.' : 'No state license required.'}</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Best HOA Software for {state.name}</h2>
+    <p>Based on your state's specific compliance needs, here are the top property management platforms for {state.name} associations:</p>
+
+    <div class="software-grid">
+      {software.map(s => (
+        <div class="software-card">
+          <div class="card-header">
+            <div class="logo-area">
+              <div class="logo-placeholder">{s.name.charAt(0)}</div>
+              <div>
+                <h3 style="font-size: 1.1rem; font-weight: 700; margin: 0;">{s.name}</h3>
+                <p style="font-size: 0.85rem; color: #6b7280;">{s.tagline}</p>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <p style="font-size: 0.9rem; color: #374151;"><strong>Best for:</strong> {s.idealCustomer}</p>
+            <p style="font-size: 0.9rem; color: #374151;"><strong>Price:</strong> ${s.pricing.startingPrice}/mo</p>
+          </div>
+          <div class="card-footer">
+            <a href={`/software/${s.slug}/`}>Read Review</a>
+            <a href={s.affiliateUrl} target="_blank" rel="nofollow sponsored noopener" class="cta-btn">Visit Site</a>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section>
+    <h2>{state.name}-Specific Compliance Features to Look For</h2>
+    <p>When choosing HOA software in {state.name}, prioritize these compliance-critical features:</p>
+    <ul>
+      <li><strong>Reserve Study Tracking:</strong> {state.reserveRequirements.includes('required') ? 'Required by state law — ensure your software supports reserve study scheduling and funding tracking.' : 'Recommended — helps maintain financial health even if not legally mandated.'}</li>
+      <li><strong>Meeting & Notice Automation:</strong> {state.meetingRequirements} — your software should support automated notices and quorum tracking.</li>
+      <li><strong>Voting Management:</strong> {state.votingThresholds} thresholds require reliable online voting systems with audit trails.</li>
+      {state.managementLicenseRequired && <li><strong>Management Licensing:</strong> Ensure your management team maintains required state certifications — some software offers compliance dashboards.</li>}
+    </ul>
+  </section>
+
+  <section>
+    <h2>Popular Software Used in {state.name}</h2>
+    <p>The most popular property management platforms among {state.name} associations include: {state.popularSoftware.join(', ')}. These tools are trusted by {state.name} managers for their compliance features and local support.</p>
+  </section>
+
+  <section>
+    <h2>Related Resources</h2>
+    <ul>
+      <li><a href="/category/hoa/under-50-units/">Best HOA Software for Small Associations</a></li>
+      <li><a href="/category/hoa/50-200-units/">Best HOA Software for Growing Portfolios</a></li>
+      <li><a href="/category/hoa/200-500-units/">Best HOA Software for Established Portfolios</a></li>
+      <li><a href="/compare/buildium-vs-hoaware/">Buildium vs HOAware: Which HOA Software Wins?</a></li>
+    </ul>
+  </section>
+
+  <section class="faq-section">
+    <h2>FAQ: HOA Compliance in {state.name}</h2>
+    <div class="faq-item">
+      <h4>What are the HOA laws in {state.name}?</h4>
+      <p>{state.name} associations are governed by {state.hoaLaws.join(' and ')}. Key statutes include {state.keyStatutes.join(', ')}. These laws cover formation, governance, and dispute resolution.</p>
+    </div>
+    <div class="faq-item">
+      <h4>Does {state.name} require HOA management licensing?</h4>
+      <p>{state.managementLicenseRequired ? 'Yes, community association managers in ' + state.name + ' must hold a valid state license.' : 'No, ' + state.name + ' does not require a state license for community association managers.'}</p>
+    </div>
+    <div class="faq-item">
+      <h4>What are the reserve study requirements in {state.name}?</h4>
+      <p>{state.reserveRequirements}</p>
+    </div>
+    <div class="faq-item">
+      <h4>What is the average HOA fee in {state.name}?</h4>
+      <p>The average HOA fee in {state.name} is <strong>{state.avgHoaFees}</strong>, though this varies significantly by location, amenities, and property type.</p>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <h3>Find the Best HOA Software for Your {state.name} Association</h3>
+    <p>Compliance-ready software helps your association avoid costly legal issues. Start your free trial today.</p>
+    {software[0] && <a href={software[0].affiliateUrl} target="_blank" rel="nofollow sponsored noopener" class="cta-btn-large">Try {software[0].name} Free</a>}
+  </section>
+</BaseLayout>

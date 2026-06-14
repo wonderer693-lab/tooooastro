@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const comparisons = [
+  { slug: 'buildium-vs-appfolio', name1: 'Buildium', name2: 'AppFolio' },
+  { slug: 'buildium-vs-hoaware', name1: 'Buildium', name2: 'HOAware' },
+  { slug: 'buildium-vs-perfect-hoa', name1: 'Buildium', name2: 'Perfect HOA' },
+  { slug: 'appfolio-vs-hoaware', name1: 'AppFolio', name2: 'HOAware' },
+  { slug: 'hoaware-vs-perfect-hoa', name1: 'HOAware', name2: 'Perfect HOA' },
+  { slug: 'hoaware-vs-lotwize', name1: 'HOAware', name2: 'LotWize' },
+  { slug: 'perfect-hoa-vs-buildium', name1: 'Perfect HOA', name2: 'Buildium' },
+  { slug: 'lotwize-vs-buildium', name1: 'LotWize', name2: 'Buildium' },
+  { slug: 'dimora-ai-vs-jurny', name1: 'Dimora AI', name2: 'Jurny' },
+  { slug: 'dimora-ai-vs-smoobu', name1: 'Dimora AI', name2: 'Smoobu' },
+  { slug: 'jurny-vs-smoobu', name1: 'Jurny', name2: 'Smoobu' },
+];
+---
+
+<BaseLayout title="Property Management Software Comparison | Side-by-Side | PropertyManagePro" description="Compare the best property management software side by side. See feature comparisons, pricing, and find out which platform wins." canonical="https://www.propertymanagepro.com/compare/">
+  <h1>Side-by-Side Comparisons</h1>
+  <p>See how the top property management platforms stack up against each other. Click a comparison to see features, pricing, and our verdict.</p>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; margin-top: 2rem;">
+    {comparisons.map(c => (
+      <a href={`/compare/${c.slug}/`} style="background: white; padding: 1.25rem; border-radius: 10px; border: 1px solid #e5e7eb; text-decoration: none; transition: all 0.2s; display: block; text-align: center;">
+        <div style="font-size: 1.1rem; font-weight: 700; color: #1a1a2e; margin-bottom: 0.5rem;">
+          {c.name1} <span style="color: #6b7280; font-weight: 400;">vs</span> {c.name2}
+        </div>
+        <span style="color: #2563eb; font-weight: 600; font-size: 0.9rem;">Compare Now &rarr;</span>
+      </a>
+    ))}
+  </div>
+
+  <section style="margin-top: 3rem; background: white; padding: 2rem; border-radius: 12px; border: 1px solid #e5e7eb;">
+    <h2>How We Compare</h2>
+    <p>Each comparison evaluates platforms across 4 key dimensions:</p>
+    <ol style="margin-top: 1rem;">
+      <li><strong>Features:</strong> 22-point feature matrix including violations, ARC, accounting, mobile, and integrations</li>
+      <li><strong>Pricing:</strong> Starting price, pricing model, free trial availability, and value for portfolio size</li>
+      <li><strong>User Reviews:</strong> Aggregated ratings from G2, Capterra, and Software Advice</li>
+      <li><strong>Fit:</strong> Which buyer profile each platform serves best</li>
+    </ol>
+  </section>
+</BaseLayout>

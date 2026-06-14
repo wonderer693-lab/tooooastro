@@ -1,0 +1,59 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import type { PropertyType, PortfolioSize, Software } from '../../lib/types';
+
+export async function getStaticPaths() {
+  const { default: propertyTypes } = await import('../../data/property-types.json');
+  return (propertyTypes as PropertyType[]).map(pt => ({
+    params: { slug: pt.slug },
+    props: { propertyType: pt },
+  }));
+}
+
+const { propertyType } = Astro.props;
+const { default: portfolioSizes } = await import('../../data/portfolio-sizes.json');
+const { default: softwareData } = await import('../../data/software.json');
+const software = softwareData as Software[];
+const sizes = portfolioSizes as PortfolioSize[];
+---
+
+<BaseLayout title={`Best ${propertyType.name} Software in 2026 | Reviews & Comparisons`} description={`Compare the best ${propertyType.name.toLowerCase()} management software. Expert reviews, feature comparisons, and pricing guides for ${propertyType.name.toLowerCase()} managers.`} canonical={`https://www.propertymanagepro.com/category/${propertyType.slug}/`}>
+  <div slot="hero" class="hero">
+    <div class="wrapper">
+      <h1>Best {propertyType.name} Management Software in 2026</h1>
+      <p>{propertyType.description}</p>
+    </div>
+  </div>
+
+  <div slot="breadcrumbs">
+    <a href="/">Home</a> &raquo; {propertyType.name} Software
+  </div>
+
+  <h2>Choose Your Portfolio Size</h2>
+  <p>Select your portfolio size to see the best {propertyType.name.toLowerCase()} management software for your needs.</p>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
+    {sizes.filter(ps => software.some(s => s.propertyTypes.includes(propertyType.id))).map(ps => (
+      <a href={`/category/${propertyType.slug}/${ps.slug}/`} style="background: white; padding: 1.5rem; border-radius: 10px; border: 1px solid #e5e7eb; text-decoration: none; display: block; transition: all 0.2s;">
+        <div style="font-size: 1.5rem; font-weight: 700; color: #1a1a2e; margin-bottom: 0.5rem;">{ps.label}</div>
+        <div style="font-size: 0.85rem; color: #6b7280;">{ps.label} ({ps.minUnits}-{ps.maxUnits ?? '10000+'} units)</div>
+        <div style="font-size: 0.9rem; color: #374151; margin-top: 0.5rem;">Budget: {ps.budgetRange}</div>
+        <span style="color: #2563eb; font-weight: 600; font-size: 0.9rem; display: inline-block; margin-top: 0.75rem;">Compare Software &rarr;</span>
+      </a>
+    ))}
+  </div>
+
+  <section style="margin-top: 3rem;">
+    <h2>Key {propertyType.name} Workflows</h2>
+    <ul>
+      {propertyType.workflows.map(w => <li><strong>{w}</strong></li>)}
+    </ul>
+  </section>
+
+  <section style="margin-top: 2rem;">
+    <h2>Who Needs {propertyType.name} Software?</h2>
+    <ul>
+      {propertyType.buyerPersonas.map(p => <li>{p}</li>)}
+    </ul>
+  </section>
+</BaseLayout>

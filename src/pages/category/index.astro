@@ -1,0 +1,21 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import type { PropertyType } from '../../lib/types';
+
+const { default: propertyTypes } = await import('../../data/property-types.json');
+const pts = propertyTypes as PropertyType[];
+---
+
+<BaseLayout title="Property Management Software by Property Type | PropertyManagePro" description="Browse property management software reviews by property type. Compare HOA, condo, vacation rental, commercial, student housing, and mobile home park software." canonical="https://www.propertymanagepro.com/category/">
+  <h1>Compare Software by Property Type</h1>
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+    {pts.map(pt => (
+      <a href={`/category/${pt.slug}/under-50-units/`} style="background: white; padding: 2rem; border-radius: 12px; border: 1px solid #e5e7eb; text-decoration: none; transition: all 0.2s;">
+        <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">{pt.icon}</div>
+        <h2 style="font-size: 1.25rem; color: #1a1a2e;">{pt.name} Software</h2>
+        <p style="font-size: 0.9rem; color: #6b7280;">{pt.description.slice(0, 100)}...</p>
+        <span style="color: #2563eb; font-weight: 600; font-size: 0.9rem;">Compare Software &rarr;</span>
+      </a>
+    ))}
+  </div>
+</BaseLayout>

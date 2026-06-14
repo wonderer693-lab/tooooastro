@@ -1,0 +1,66 @@
+---
+import type { PropertyType, PortfolioSize, Software, State } from '../lib/types';
+
+async function loadData() {
+  const { default: propertyTypes } = await import('../data/property-types.json');
+  const { default: portfolioSizes } = await import('../data/portfolio-sizes.json');
+  const { default: softwareData } = await import('../data/software.json');
+  const { default: statesData } = await import('../data/states.json');
+  const software = softwareData as Software[];
+
+  const comparisonPairs: { slug: string }[] = [];
+  const pairList = [
+    ['buildium', 'appfolio'], ['buildium', 'hoaware'], ['buildium', 'perfect-hoa'],
+    ['appfolio', 'hoaware'], ['hoaware', 'perfect-hoa'], ['hoaware', 'lotwize'],
+    ['perfect-hoa', 'buildium'], ['lotwize', 'buildium'],
+    ['dimora-ai', 'jurny'], ['dimora-ai', 'smoobu'], ['jurny', 'smoobu'],
+  ];
+  for (const [id1, id2] of pairList) comparisonPairs.push({ slug: `${id1}-vs-${id2}` });
+
+  return { propertyTypes: propertyTypes as PropertyType[], portfolioSizes: portfolioSizes as PortfolioSize[], software, states: statesData as State[], comparisonPairs };
+}
+
+const { propertyTypes, portfolioSizes, software, states, comparisonPairs } = await loadData();
+const baseUrl = 'https://www.propertymanagepro.com';
+
+const urls: { loc: string; priority: string; changefreq: string }[] = [];
+
+// Homepage
+urls.push({ loc: `${baseUrl}/`, priority: '1.0', changefreq: 'weekly' });
+
+// Category pages
+for (const pt of propertyTypes) {
+  for (const ps of portfolioSizes) {
+    const hasSoftware = software.some(s => s.propertyTypes.includes(pt.id) && ps.minUnits >= s.portfolioSizeRange.min && (s.portfolioSizeRange.max === null || ps.maxUnits === null || ps.maxUnits! <= s.portfolioSizeRange.max!));
+    if (hasSoftware) {
+      urls.push({ loc: `${baseUrl}/category/${pt.slug}/${ps.slug}/`, priority: '0.9', changefreq: 'monthly' });
+    }
+  }
+}
+
+// Software review pages
+for (const s of software) {
+  urls.push({ loc: `${baseUrl}/software/${s.slug}/`, priority: '0.8', changefreq: 'monthly' });
+}
+
+// Comparison pages
+for (const cp of comparisonPairs) {
+  urls.push({ loc: `${baseUrl}/compare/${cp.slug}/`, priority: '0.7', changefreq: 'monthly' });
+}
+
+// State pages
+for (const st of states) {
+  urls.push({ loc: `${baseUrl}/state/${st.slug}/`, priority: '0.6', changefreq: 'monthly' });
+}
+---
+
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+{urls.map(u => (
+  <url>
+    <loc>{u.loc}</loc>
+    <priority>{u.priority}</priority>
+    <changefreq>{u.changefreq}</changefreq>
+  </url>
+))}
+</urlset>

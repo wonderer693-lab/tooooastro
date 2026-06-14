@@ -1,0 +1,180 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AffiliateButton from '../../components/AffiliateButton.astro';
+import ComparisonTable from '../../components/ComparisonTable.astro';
+import type { Software } from '../../lib/types';
+import { getStars, getEffectiveCommission } from '../../lib/utils';
+import { generateProductSchema, generateFAQSchema } from '../../lib/utils';
+
+export async function getStaticPaths() {
+  const { default: softwareData } = await import('../../data/software.json');
+  return (softwareData as Software[]).map(s => ({
+    params: { slug: s.slug },
+    props: { software: s },
+  }));
+}
+
+const { software } = Astro.props;
+const pageTitle = `${software.name} Review 2026: Features, Pricing & Alternatives | PropertyManagePro`;
+const pageDescription = `Read our in-depth ${software.name} review. Compare features, pricing, pros & cons, and see how it stacks up against alternatives. Ideal for ${software.idealCustomer}.`;
+
+const featureLabels: Record<string, string> = {
+  violations: 'Violation Tracking', arcRequests: 'ARC Requests', onlinePayments: 'Online Payments',
+  maintenancePortal: 'Maintenance Portal', reserveStudies: 'Reserve Studies', documentManagement: 'Document Management',
+  communication: 'Communication Tools', accounting: 'Native Accounting', mobileApp: 'Mobile App',
+  api: 'API Access', quickbooksSync: 'QuickBooks Sync', bankIntegration: 'Bank Integration',
+  insuranceTracking: 'Insurance Tracking', voting: 'Online Voting', calendar: 'Calendar',
+  workOrders: 'Work Orders', vendorManagement: 'Vendor Management', leaseTracking: 'Lease Tracking',
+  dynamicPricing: 'Dynamic Pricing', channelManagement: 'Channel Management', guestCommunication: 'Guest Communication',
+};
+
+const faqs = [
+  { question: `Is ${software.name} right for my property type?`, answer: `${software.name} is best suited for ${software.bestFor.join(', ')}. It supports ${software.propertyTypes.length} property type${software.propertyTypes.length > 1 ? 's' : ''} in the ${software.portfolioSizeRange.min}-${software.portfolioSizeRange.max ?? '10000+'} unit range.` },
+  { question: `How much does ${software.name} cost?`, answer: `${software.name} pricing starts at $${software.pricing.startingPrice}/month with ${software.pricing.pricingModel.replace('-', ' ')} pricing.${software.pricing.freeTrial ? ' A free trial is available.' : ''}${software.pricing.freePlan ? ' A free plan is also available.' : ''}` },
+  { question: `Does ${software.name} integrate with QuickBooks?`, answer: `${software.features.quickbooksSync ? 'Yes' : 'No'}, ${software.name} ${software.features.quickbooksSync ? 'supports QuickBooks synchronization.' : 'does not natively integrate with QuickBooks.'}` },
+  { question: `What support options does ${software.name} offer?`, answer: `${software.name} offers: ${software.support.join(', ')}.` },
+  { question: `How long does it take to get started with ${software.name}?`, answer: `Onboarding with ${software.name} typically takes ${software.onboarding.toLowerCase()}.` },
+];
+
+const productSchema = generateProductSchema(software);
+const faqSchema = generateFAQSchema(faqs);
+---
+
+<BaseLayout title={pageTitle} description={pageDescription} canonical={`https://www.propertymanagepro.com/software/${software.slug}/`} schema={[productSchema, faqSchema]}>
+  <div slot="breadcrumbs">
+    <a href="/">Home</a> &raquo; <a href="/">Software Reviews</a> &raquo; {software.name}
+  </div>
+
+  <div class="affiliate-disclosure">
+    We may earn commissions if you purchase through our affiliate links. Our reviews are independent.
+  </div>
+
+  <div style="display: flex; gap: 2rem; align-items: flex-start; margin-bottom: 2rem; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 280px;">
+      <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem;">
+        <div style="width: 64px; height: 64px; background: linear-gradient(135deg, #1a1a2e, #2563eb); color: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.5rem; flex-shrink: 0;">{software.name.charAt(0)}</div>
+        <div>
+          <h1 style="font-size: 2rem; margin: 0;">{software.name}</h1>
+          <p style="color: #6b7280; font-size: 1.05rem;">{software.tagline}</p>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
+        {software.reviews.g2 && <span>G2: {getStars(software.reviews.g2)} {software.reviews.g2}</span>}
+        {software.reviews.capterra && <span>Capterra: {getStars(software.reviews.capterra)} {software.reviews.capterra}</span>}
+        <span>Founded: {software.yearFounded}</span>
+        <span>{software.companySize}</span>
+      </div>
+
+      <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <AffiliateButton software={software} label={`Visit ${software.name} →`} />
+        <AffiliateButton software={software} label="Start Free Trial" variant="secondary" />
+      </div>
+    </div>
+
+    <div style="background: white; padding: 1.5rem; border-radius: 12px; border: 1px solid #e5e7eb; min-width: 250px;">
+      <h3 style="margin-bottom: 0.75rem;">Quick Facts</h3>
+      <table style="font-size: 0.9rem; width: 100%;">
+        <tr><td style="padding: 0.25rem 0; color: #6b7280;">Price</td><td style="font-weight: 600;">${software.pricing.startingPrice}/mo</td></tr>
+        <tr><td style="padding: 0.25rem 0; color: #6b7280;">Free Trial</td><td>{software.pricing.freeTrial ? '✅ Yes' : '❌ No'}</td></tr>
+        <tr><td style="padding: 0.25rem 0; color: #6b7280;">Commission</td><td>{getEffectiveCommission(software)}</td></tr>
+        <tr><td style="padding: 0.25rem 0; color: #6b7280;">Best For</td><td>{software.bestFor.join(', ')}</td></tr>
+        <tr><td style="padding: 0.25rem 0; color: #6b7280;">Portfolio</td><td>{software.portfolioSizeRange.min}-{software.portfolioSizeRange.max ?? '10000+'} units</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="quick-verdict">
+    <h3>Our Verdict</h3>
+    <p>{software.tagline}. {software.pros[0]}. {software.cons[0] ? `However, ${software.cons[0].toLowerCase()}.` : ''} Best suited for <strong>{software.idealCustomer}</strong>.</p>
+  </div>
+
+  <section>
+    <h2>Pros & Cons</h2>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+      <div style="background: #ecfdf5; padding: 1.5rem; border-radius: 8px;">
+        <h3 style="color: #059669; margin-top: 0;">Pros</h3>
+        <ul style="list-style: none; padding: 0;">
+          {software.pros.map(p => <li style="padding: 0.5rem 0; border-bottom: 1px solid #d1fae5;">✓ {p}</li>)}
+        </ul>
+      </div>
+      <div style="background: #fef2f2; padding: 1.5rem; border-radius: 8px;">
+        <h3 style="color: #dc2626; margin-top: 0;">Cons</h3>
+        <ul style="list-style: none; padding: 0;">
+          {software.cons.map(c => <li style="padding: 0.5rem 0; border-bottom: 1px solid #fecaca;">✗ {c}</li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Key Features</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem;">
+      {Object.entries(software.features).filter(([, v]) => v).map(([key]) => (
+        <div style="display: flex; align-items: center; gap: 0.5rem; background: white; padding: 0.75rem; border-radius: 8px; border: 1px solid #e5e7eb;">
+          <span style="color: #059669;">✓</span>
+          <span style="font-size: 0.9rem;">{featureLabels[key] ?? key}</span>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section>
+    <h2>Pricing</h2>
+    <p>{software.name} uses <strong>{software.pricing.pricingModel.replace('-', ' ')} pricing</strong> starting at <strong>${software.pricing.startingPrice}/month</strong>. {software.pricing.freeTrial ? 'A free trial is available.' : ''} {software.pricing.freePlan ? 'A free plan is available for basic use.' : ''}</p>
+    <p>For exact pricing based on your portfolio size, visit the {software.name} website.</p>
+    <AffiliateButton software={software} label={`Check ${software.name} Pricing →`} />
+  </section>
+
+  <section>
+    <h2>Integrations</h2>
+    {software.integrations.length > 0 ? (
+      <ul>{software.integrations.map(i => <li>{i}</li>)}</ul>
+    ) : <p>No major third-party integrations listed.</p>}
+  </section>
+
+  <section>
+    <h2>Support & Onboarding</h2>
+    <p><strong>Onboarding:</strong> {software.onboarding}</p>
+    <p><strong>Support channels:</strong> {software.support.join(', ')}</p>
+  </section>
+
+  <section>
+    <h2>Who {software.name} Is Best For</h2>
+    <p>{software.idealCustomer}</p>
+    {software.notIdealFor.length > 0 && (
+      <>
+        <h3>Who Should Look Elsewhere</h3>
+        <ul>{software.notIdealFor.map(n => <li>{n}</li>)}</ul>
+      </>
+    )}
+  </section>
+
+  <section>
+    <h2>Alternatives to {software.name}</h2>
+    <p>If {software.name} doesn't fit your needs, consider these alternatives:</p>
+    <ul>
+      <li><a href="/software/buildium/">Buildium</a> — Best for professional management companies</li>
+      <li><a href="/software/appfolio/">AppFolio</a> — Best for large portfolios (500+ units)</li>
+      <li><a href="/software/hoaware/">HOAware</a> — Best for self-managed associations (lifetime recurring affiliate)</li>
+      <li><a href="/software/perfect-hoa/">Perfect HOA</a> — Best for modern self-managed HOA boards</li>
+      <li><a href="/software/lotwize/">LotWize</a> — Best for mobile home park operators</li>
+    </ul>
+  </section>
+
+  <section class="faq-section">
+    <h2>Frequently Asked Questions</h2>
+    {faqs.map(f => (
+      <div class="faq-item">
+        <h4>{f.question}</h4>
+        <p>{f.answer}</p>
+      </div>
+    ))}
+  </section>
+
+  <section class="cta-section">
+    <h3>Ready to Try {software.name}?</h3>
+    <p>Get started with {software.name} and see how it streamlines your property management workflows.</p>
+    <a href={software.affiliateUrl} target="_blank" rel="nofollow sponsored noopener" class="cta-btn-large">Try {software.name} Free →</a>
+  </section>
+</BaseLayout>
