@@ -1,0 +1,156 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="HOA Reserve Study Calculator | Estimate Reserve Funding Requirements" description="Free HOA reserve study calculator. Estimate your association's reserve funding requirements based on unit count, property type, and state regulations." canonical="https://www.propertymanagepro.com/resources/reserve-study-calculator/" lastUpdated="June 14, 2026">
+  <h1>HOA Reserve Study Calculator</h1>
+  <p>Estimate your association's reserve funding requirements in seconds. This calculator provides a preliminary estimate — always consult a professional for your official reserve study.</p>
+
+  <div class="affiliate-disclosure">
+    This free tool is provided as an educational resource. No data is collected or stored.
+  </div>
+
+  <div style="background: white; padding: 2rem; border-radius: 12px; border: 1px solid #e5e7eb; max-width: 700px; margin: 2rem auto;">
+    <form id="reserveForm" onsubmit="return false;">
+      <div style="margin-bottom: 1.5rem;">
+        <label for="unitCount" style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Number of Units</label>
+        <input type="number" id="unitCount" min="1" max="10000" value="100" style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem;" />
+      </div>
+
+      <div style="margin-bottom: 1.5rem;">
+        <label for="propertyType" style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Property Type</label>
+        <select id="propertyType" style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem; background: white;">
+          <option value="condo">Condo / Apartment</option>
+          <option value="hoa">Single-Family HOA</option>
+          <option value="townhome">Townhome Community</option>
+          <option value="mixed">Mixed-Use</option>
+        </select>
+      </div>
+
+      <div style="margin-bottom: 1.5rem;">
+        <label for="propertyAge" style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Property Age (years)</label>
+        <input type="range" id="propertyAge" min="1" max="50" value="15" style="width: 100%;" />
+        <span id="ageDisplay">15 years</span>
+      </div>
+
+      <div style="margin-bottom: 1.5rem;">
+        <label for="state" style="display: block; font-weight: 600; margin-bottom: 0.5rem;">State (for compliance requirements)</label>
+        <select id="state" style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem; background: white;">
+          <option value="CA">California</option>
+          <option value="FL">Florida</option>
+          <option value="NY">New York</option>
+          <option value="TX">Texas</option>
+          <option value="IL">Illinois</option>
+          <option value="CO">Colorado</option>
+          <option value="WA">Washington</option>
+          <option value="NV">Nevada</option>
+          <option value="AZ">Arizona</option>
+          <option value="VA">Virginia</option>
+          <option value="other">Other State</option>
+        </select>
+      </div>
+
+      <div style="margin-bottom: 1.5rem;">
+        <label for="currentReserves" style="display: block; font-weight: 600; margin-bottom: 0.5rem;">Current Reserves ($)</label>
+        <input type="number" id="currentReserves" min="0" value="50000" step="1000" style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem;" />
+      </div>
+
+      <button type="button" onclick="calculateReserves()" style="width: 100%; padding: 1rem; background: #059669; color: white; border: none; border-radius: 8px; font-weight: 700; font-size: 1.1rem; cursor: pointer;">Calculate Reserve Estimate</button>
+    </form>
+
+    <div id="results" style="display: none; margin-top: 2rem; padding: 1.5rem; background: #ecfdf5; border-radius: 8px; border-left: 4px solid #059669;">
+      <h3 style="margin-top: 0; color: #059669;">Estimated Reserve Requirements</h3>
+      <div id="resultContent"></div>
+    </div>
+  </div>
+
+  <section>
+    <h2>What Is a Reserve Study?</h2>
+    <p>A reserve study is a financial planning tool that helps associations budget for future major repairs and replacements of common elements. It identifies the remaining useful life of major components, estimates replacement costs, and recommends annual reserve contributions.</p>
+
+    <h2>Why Reserve Studies Matter</h2>
+    <ul>
+      <li><strong>Legal compliance:</strong> States like California, Florida, Nevada, and Washington mandate reserve studies every 3-5 years</li>
+      <li><strong>Financial stability:</strong> Properly funded reserves prevent special assessments</li>
+      <li><strong>Property values:</strong> Well-funded reserves correlate with higher property values</li>
+      <li><strong>Lender requirements:</strong> Fannie Mae and Freddie Mac require adequate reserve funding for condo project eligibility</li>
+    </ul>
+
+    <h2>Recommended Software for Reserve Management</h2>
+    <p>These platforms include reserve study tracking and funding modules:</p>
+    <ul>
+      <li><a href="/software/buildium/">Buildium</a> &mdash; Reserve fund management with G/L integration</li>
+      <li><a href="/software/appfolio/">AppFolio</a> &mdash; Enterprise reserve tracking for large portfolios</li>
+      <li><a href="/software/perfect-hoa/">Perfect HOA</a> &mdash; Reserve fund tracking for self-managed associations</li>
+    </ul>
+  </section>
+
+  <script>
+    function calculateReserves() {
+      const units = parseInt(document.getElementById('unitCount').value) || 100;
+      const age = parseInt(document.getElementById('propertyAge').value) || 15;
+      const currentReserves = parseFloat(document.getElementById('currentReserves').value) || 0;
+      const state = document.getElementById('state').value;
+      const type = document.getElementById('propertyType').value;
+
+      // Cost per unit estimates
+      const costPerUnit = type === 'condo' ? 1500 : type === 'hoa' ? 800 : type === 'townhome' ? 1200 : 2000;
+      const totalNeeded = units * costPerUnit * (1 + (age - 5) * 0.02);
+      const annualContribution = totalNeeded / 20;
+      const fundingRatio = currentReserves / totalNeeded;
+      const shortfall = totalNeeded - currentReserves;
+      const recommendedMonthlyPerUnit = Math.ceil(annualContribution / units / 12);
+
+      let complianceNote = '';
+      const stateRules = {
+        'CA': 'California (Davis-Stirling Act): Full reserve funding recommended. Reserve study every 3 years.',
+        'FL': 'Florida (718/720): Mandatory reserve study. Full funding of reserves required by law.',
+        'NY': 'New York (RPL 339): 10% of budget must go to reserves. Study every 5 years.',
+        'TX': 'Texas (Prop Code 209): No statutory reserve requirements. Study recommended.',
+        'IL': 'Illinois (765 ILCS 605/160): Reserve study every 5 years. 10% budget to reserves.',
+        'CO': 'Colorado (CCIOA): Study every 5 years. Funding recommended but not mandatory.',
+        'WA': 'Washington (64.32/64.38): Study every 3 years. Full funding required.',
+        'NV': 'Nevada (NRS 116): Study every 5 years. Full funding required by law.',
+        'AZ': 'Arizona (33-1201/1801): Study every 5 years. Funding recommended.',
+        'VA': 'Virginia (55.1-1900/1800): Study every 5 years. Full funding recommended.',
+        'other': 'No specific state mandate. Best practice: study every 5 years.'
+      };
+      complianceNote = stateRules[state] || 'Consult your state HOA laws for specific requirements.';
+
+      const doc = document.getElementById('results');
+      doc.style.display = 'block';
+
+      let statusBadge = '';
+      if (fundingRatio >= 0.7) statusBadge = '<span style="color: #059669; font-weight: 700;">✅ Well Funded (70%+)</span>';
+      else if (fundingRatio >= 0.5) statusBadge = '<span style="color: #d97706; font-weight: 700;">⚠️ Adequate (50-70%)</span>';
+      else statusBadge = '<span style="color: #dc2626; font-weight: 700;">🔴 Underfunded (&lt;50%)</span>';
+
+      document.getElementById('resultContent').innerHTML = `
+        <table style="width: 100%; border-collapse: collapse;">
+          <tr><td style="padding: 0.5rem 0; color: #6b7280;">Total Reserve Needs</td><td style="font-weight: 700; text-align: right;">$${Math.round(totalNeeded).toLocaleString()}</td></tr>
+          <tr><td style="padding: 0.5rem 0; color: #6b7280;">Current Reserves</td><td style="text-align: right;">$${currentReserves.toLocaleString()}</td></tr>
+          <tr><td style="padding: 0.5rem 0; color: #6b7280;">Shortfall / Surplus</td><td style="font-weight: 700; text-align: right; color: ${shortfall > 0 ? '#dc2626' : '#059669'};">${shortfall > 0 ? '-' : '+'}$${Math.abs(shortfall).toLocaleString()}</td></tr>
+          <tr><td style="padding: 0.5rem 0; color: #6b7280;">Funding Ratio</td><td style="font-weight: 700; text-align: right;">${(fundingRatio * 100).toFixed(1)}%</td></tr>
+          <tr><td style="padding: 0.5rem 0; color: #6b7280;">Status</td><td style="text-align: right;">${statusBadge}</td></tr>
+          <tr><td style="padding: 0.5rem 0; color: #6b7280;">Annual Contribution Needed</td><td style="font-weight: 700; text-align: right;">$${Math.round(annualContribution).toLocaleString()}/yr</td></tr>
+          <tr><td style="padding: 0.5rem 0; color: #6b7280;">Per Unit / Month</td><td style="font-weight: 700; text-align: right;">~$${recommendedMonthlyPerUnit}/unit/mo</td></tr>
+        </table>
+        <p style="margin-top: 1rem; font-size: 0.85rem; color: #6b7280;">
+          <strong>Compliance note:</strong> ${complianceNote}
+        </p>
+        <p style="font-size: 0.8rem; color: #9ca3af; margin-top: 0.5rem;">
+          * This is an educational estimate only. Always consult a professional reserve study specialist for your official study.
+        </p>
+      `;
+    }
+
+    document.getElementById('propertyAge').addEventListener('input', function() {
+      document.getElementById('ageDisplay').textContent = this.value + ' years';
+    });
+  </script>
+
+  <style>
+    input[type="number"]:focus, select:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
+    input[type="range"] { accent-color: #059669; }
+  </style>
+</BaseLayout>

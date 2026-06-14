@@ -6,20 +6,30 @@ interface Props {
 }
 
 const { software } = Astro.props;
-const topPlatform = ['Buildium', 'LotWize', 'AppFolio'];
-const isTop = topPlatform.includes(software.name);
+const isEditorChoice = software.name === 'Buildium' || software.name === 'HOAware';
+const logoColors: Record<string, string> = {
+  Buildium: '#1a1a2e',
+  AppFolio: '#2563eb',
+  HOAware: '#059669',
+  'Perfect HOA': '#7c3aed',
+  LotWize: '#d97706',
+  'Dimora AI': '#0891b2',
+  Jurny: '#dc2626',
+  Smoobu: '#db2777',
+};
+const bgColor = logoColors[software.name] ?? '#374151';
 ---
 
 <div class="software-card">
   <div class="card-header">
     <div class="logo-area">
-      <div class="logo-placeholder">{software.name.charAt(0)}</div>
+      <div class="logo-placeholder" style="background: {bgColor};" aria-label="{software.name} logo">{software.name.charAt(0)}</div>
       <div>
         <h3 class="software-name">{software.name}</h3>
         <p class="tagline">{software.tagline}</p>
       </div>
     </div>
-    {isTop && <span class="badge">Editors Choice</span>}
+    {isEditorChoice && <span class="badge">Editor's Choice</span>}
   </div>
 
   <div class="card-body">
@@ -41,53 +51,21 @@ const isTop = topPlatform.includes(software.name);
   </div>
 
   <div class="card-footer">
-    <a href={`/software/${software.slug}/`} class="review-link">Read Full Review</a>
-    <a href={software.affiliateUrl} target="_blank" rel="nofollow sponsored noopener" class="cta-btn">Visit Site</a>
+    <a href={`/software/${software.slug}/`} class="review-link" aria-label={`Read full ${software.name} review`}>Read Full Review</a>
+    <a href={software.affiliateUrl} target="_blank" rel="nofollow sponsored noopener" class="cta-btn" aria-label={`Visit ${software.name} website - affiliate link`}>Visit Site</a>
   </div>
 </div>
 
 <style>
-  .software-card {
-    background: white;
-    border-radius: 12px;
-    border: 1px solid #e5e7eb;
-    overflow: hidden;
-    transition: all 0.2s;
-    display: flex;
-    flex-direction: column;
-  }
+  .software-card { background: white; border-radius: 12px; border: 1px solid #e5e7eb; overflow: hidden; transition: all 0.2s; display: flex; flex-direction: column; }
   .software-card:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.08); transform: translateY(-2px); }
-  .card-header {
-    padding: 1.25rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    border-bottom: 1px solid #f0f0f0;
-  }
+  .card-header { padding: 1.25rem; display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid #f0f0f0; }
   .logo-area { display: flex; gap: 1rem; align-items: center; }
-  .logo-placeholder {
-    width: 48px; height: 48px;
-    background: linear-gradient(135deg, #1a1a2e, #2563eb);
-    color: white;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 1.25rem;
-    flex-shrink: 0;
-  }
+  .software-logo { width: 48px; height: 48px; object-fit: contain; border-radius: 8px; flex-shrink: 0; }
+  .logo-fallback { width: 48px; height: 48px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1.25rem; flex-shrink: 0; }
   .software-name { font-size: 1.1rem; font-weight: 700; margin: 0; }
   .tagline { font-size: 0.85rem; color: #6b7280; margin-top: 0.25rem; }
-  .badge {
-    background: #fef3c7;
-    color: #92400e;
-    padding: 0.25rem 0.75rem;
-    border-radius: 999px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    white-space: nowrap;
-  }
+  .badge { background: #fef3c7; color: #92400e; padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; white-space: nowrap; }
   .card-body { padding: 1.25rem; flex: 1; }
   .ideal-customer { font-size: 0.9rem; margin-bottom: 1rem; color: #374151; }
   .pros-cons { display: grid; gap: 0.5rem; margin-bottom: 1rem; }
@@ -97,24 +75,8 @@ const isTop = topPlatform.includes(software.name);
   .pricing-info { display: flex; gap: 0.5rem; align-items: center; }
   .price { font-weight: 700; color: #1a1a2e; }
   .free-trial { font-size: 0.8rem; color: #059669; background: #ecfdf5; padding: 0.15rem 0.5rem; border-radius: 4px; }
-  .card-footer {
-    padding: 1rem 1.25rem;
-    border-top: 1px solid #f0f0f0;
-    display: flex;
-    gap: 0.75rem;
-    align-items: center;
-  }
+  .card-footer { padding: 1rem 1.25rem; border-top: 1px solid #f0f0f0; display: flex; gap: 0.75rem; align-items: center; }
   .review-link { font-size: 0.85rem; font-weight: 500; }
-  .cta-btn {
-    margin-left: auto;
-    padding: 0.5rem 1.25rem;
-    background: #2563eb;
-    color: white;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    transition: background 0.2s;
-    text-decoration: none;
-  }
+  .cta-btn { margin-left: auto; padding: 0.5rem 1.25rem; background: #2563eb; color: white; border-radius: 6px; font-size: 0.85rem; font-weight: 600; transition: background 0.2s; text-decoration: none; }
   .cta-btn:hover { background: #1d4ed8; text-decoration: none; }
 </style>

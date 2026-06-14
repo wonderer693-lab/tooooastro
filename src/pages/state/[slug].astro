@@ -1,82 +1,147 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import AffiliateButton from '../../components/AffiliateButton.astro';
+import ComparisonTable from '../../components/ComparisonTable.astro';
 import type { State, Software } from '../../lib/types';
+import { generateFAQSchema, generateBreadcrumb } from '../../lib/utils';
 
 export async function getStaticPaths() {
   const { default: statesData } = await import('../../data/states.json');
   const { default: softwareData } = await import('../../data/software.json');
   const software = softwareData as Software[];
 
-  const paths: { params: { slug: string }; props: { state: State; software: Software[] } }[] = [];
+  const paths = [];
 
   for (const st of statesData as State[]) {
     const relevantSoftware = software.filter(s => st.popularSoftware.some(ps => s.name.toLowerCase().includes(ps.toLowerCase())));
     paths.push({
       params: { slug: st.slug },
-      props: { state: st as State, software: relevantSoftware },
+      props: { state: st as State, software: relevantSoftware.length > 0 ? relevantSoftware : software.slice(0, 3) },
     });
   }
   return paths;
 }
 
 const { state, software } = Astro.props;
+
 const pageTitle = `Best HOA Software for ${state.name} 2026: ${state.hoaLaws.slice(0, 2).join(' & ')} Compliance`;
-const pageDescription = `Find the best HOA management software for ${state.name}. Compare tools that handle ${state.hoaLaws.slice(0, 2).join(', ')} compliance, ${state.reserveRequirements.toLowerCase()}, and ${state.meetingRequirements.toLowerCase()}.`;
+const pageDescription = `Find the best HOA management software for ${state.name}. Compare tools that handle ${state.hoaLaws.slice(0, 2).join(', ')} compliance, ${state.reserveRequirements.toLowerCase()}, and ${state.meetingRequirements.toLowerCase()}. Backed by ${state.keyStatutes.join(', ')}.`;
+
+const faqs = [
+  { question: `What HOA laws apply in ${state.name}?`, answer: `${state.name} associations are governed by ${state.hoaLaws.join(' and ')}. Key statutes include ${state.keyStatutes.join(', ')}. These laws cover formation, governance, reserve requirements, meeting procedures, and dispute resolution.` },
+  { question: `Does ${state.name} require a reserve study?`, answer: state.reserveRequirements },
+  { question: `Is HOA management licensing required in ${state.name}?`, answer: state.managementLicenseRequired ? `Yes, community association managers in ${state.name} must be licensed. Ensure your software vendor is aware of state-specific licensing requirements.` : `No, ${state.name} does not currently require a state license for community association managers.` },
+  { question: `What is the average HOA fee in ${state.name}?`, answer: `The average monthly HOA fee in ${state.name} is ${state.avgHoaFees}. This varies by location, amenities, and property type. Associations with fully funded reserves tend to have higher but more stable fees.` },
+  { question: `Which software is most popular among ${state.name} associations?`, answer: `${state.popularSoftware.join(', ')} are widely used in ${state.name}. ${software[0]?.name ?? 'Top platforms'} offers features tailored to ${state.name}'s regulatory environment.` },
+];
+
+const breadcrumbItems = [
+  { name: 'Home', url: '/' },
+  { name: `${state.name} HOA Software`, url: `/state/${state.slug}/` },
+];
+const breadcrumbSchema = generateBreadcrumb(breadcrumbItems);
+const faqSchema = generateFAQSchema(faqs);
+
+const statuteCitations = state.keyStatutes.map(s => ({
+  "@context": "https://schema.org",
+  "@type": "Legislation",
+  "name": `${state.name} Statute ${s}`,
+  "jurisdiction": { "@type": "AdministrativeArea", "name": state.name },
+}));
+
+const complianceFeatureLabels: Record<string, { feature: string; why: string }> = {
+  violations: { feature: 'Violation Tracking', why: `${state.name} associations need robust violation tracking with notice timelines and hearing scheduling.` },
+  arcRequests: { feature: 'ARC Request Management', why: `Architectural review with documented approval/denial workflows` },
+  onlinePayments: { feature: 'Online Payments', why: `Convenient fee collection with automated late fee application` },
+  documentManagement: { feature: 'Document Storage', why: `Secure storage for governing documents, meeting minutes, and financial records` },
+  voting: { feature: 'Online Voting', why: `${state.votingThresholds} thresholds require reliable electronic voting with audit trails` },
+  reserveStudies: { feature: 'Reserve Study Tracking', why: `${state.reserveRequirements} — tracking is critical for ${state.name} compliance` },
+  accounting: { feature: 'Native Accounting', why: `Fund accounting for operating vs reserve funds` },
+  communication: { feature: 'Communication Tools', why: `${state.meetingRequirements} requires automated meeting notices and resident communication` },
+};
 ---
 
-<BaseLayout title={pageTitle} description={pageDescription} canonical={`https://www.propertymanagepro.com/state/${state.slug}/`}>
+<BaseLayout title={pageTitle} description={pageDescription} canonical={`https://www.propertymanagepro.com/state/${state.slug}/`} schema={[breadcrumbSchema, faqSchema, ...statuteCitations]} lastUpdated="June 14, 2026">
   <div slot="breadcrumbs">
-    <a href="/">Home</a> &raquo; <a href="/">State Guides</a> &raquo; {state.name}
+    <a href="/">Home</a> &raquo; <a href="/state/">State Guides</a> &raquo; {state.name}
   </div>
 
   <div class="affiliate-disclosure">
-    We may earn commissions if you purchase through our affiliate links.
+    We may earn commissions if you purchase through our affiliate links. Reviews are independent.
   </div>
 
   <h1>{pageTitle}</h1>
 
   <div class="quick-verdict">
     <h3>{state.name} HOA Compliance at a Glance</h3>
-    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
-      <div style="background: white; padding: 1rem; border-radius: 8px;">
-        <strong>Avg HOA Fees</strong><br />
-        <span style="font-size: 1.5rem; font-weight: 700; color: #059669;">{state.avgHoaFees}</span>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value">{state.avgHoaFees}</div>
+        <div class="stat-label">Avg HOA Fees</div>
       </div>
-      <div style="background: white; padding: 1rem; border-radius: 8px;">
-        <strong>Litigation Risk</strong><br />
-        <span style="font-size: 1.1rem; font-weight: 600; color: {state.litigationRisk === 'high' ? '#dc2626' : state.litigationRisk === 'medium' ? '#d97706' : '#059669'};">{state.litigationRisk === 'high' ? '🔴 High' : state.litigationRisk === 'medium' ? '🟡 Medium' : '🟢 Low'}</span>
+      <div class="stat-card">
+        <div class="stat-value" style="color: {state.litigationRisk === 'high' ? '#dc2626' : state.litigationRisk === 'medium' ? '#d97706' : '#059669'};">{state.litigationRisk.toUpperCase()}</div>
+        <div class="stat-label">Litigation Risk</div>
       </div>
-      <div style="background: white; padding: 1rem; border-radius: 8px;">
-        <strong>Mgmt License Required</strong><br />
-        <span style="font-size: 1.1rem; font-weight: 600;">{state.managementLicenseRequired ? '✅ Yes' : '❌ No'}</span>
+      <div class="stat-card">
+        <div class="stat-value">{state.managementLicenseRequired ? 'Required' : 'Not Required'}</div>
+        <div class="stat-label">Mgmt License</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">{state.keyStatutes.length}</div>
+        <div class="stat-label">Key Statutes</div>
       </div>
     </div>
   </div>
 
   <section>
     <h2>{state.name} HOA Laws & Regulations</h2>
-    <p>{state.name} associations operate under {state.hoaLaws.join(' and ')}. Key statutes include {state.keyStatutes.join(', ')}.</p>
+    <p>{state.name} community associations are governed by <strong>{state.hoaLaws.join(' and ')}</strong>. The following statutes are most relevant to association management software selection:</p>
 
-    <h3>Key Compliance Requirements</h3>
-    <ul>
-      <li><strong>Reserve Requirements:</strong> {state.reserveRequirements}</li>
-      <li><strong>Meeting Requirements:</strong> {state.meetingRequirements}</li>
-      <li><strong>Voting Thresholds:</strong> {state.votingThresholds}</li>
-      <li><strong>Management Licensing:</strong> {state.managementLicenseRequired ? 'State license required for community association managers.' : 'No state license required.'}</li>
-    </ul>
+    <div style="background: #f8fafc; border-radius: 8px; padding: 1.5rem; margin: 1rem 0;">
+      <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+        <thead>
+          <tr style="border-bottom: 2px solid #e5e7eb;">
+            <th style="text-align: left; padding: 0.5rem;">Statute</th>
+            <th style="text-align: left; padding: 0.5rem;">Requirement</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom: 1px solid #e5e7eb;">
+            <td style="padding: 0.75rem 0.5rem;"><strong>Reserve Requirements</strong></td>
+            <td style="padding: 0.75rem 0.5rem;">{state.reserveRequirements}</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #e5e7eb;">
+            <td style="padding: 0.75rem 0.5rem;"><strong>Meeting & Notice</strong></td>
+            <td style="padding: 0.75rem 0.5rem;">{state.meetingRequirements}</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #e5e7eb;">
+            <td style="padding: 0.75rem 0.5rem;"><strong>Voting Thresholds</strong></td>
+            <td style="padding: 0.75rem 0.5rem;">{state.votingThresholds}</td>
+          </tr>
+          <tr>
+            <td style="padding: 0.75rem 0.5rem;"><strong>Management Licensing</strong></td>
+            <td style="padding: 0.75rem 0.5rem;">{state.managementLicenseRequired ? 'State license required for community association managers' : 'No state license required'}</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="font-size: 0.85rem; color: #6b7280; margin-top: 1rem;">
+        <strong>Statutory references:</strong> {state.keyStatutes.map(s => `${state.name} Rev. Stat. § ${s}`).join(', ')}.
+        <a href={`https://www.google.com/search?q=${encodeURIComponent(state.name)}+${encodeURIComponent(state.hoaLaws[0])}`} target="_blank" rel="noopener"> Verify current statutes &rarr;</a>
+      </p>
+    </div>
   </section>
 
   <section>
     <h2>Best HOA Software for {state.name}</h2>
-    <p>Based on your state's specific compliance needs, here are the top property management platforms for {state.name} associations:</p>
+    <p>Based on {state.name}'s specific compliance requirements, these platforms offer the best features for your association.</p>
 
     <div class="software-grid">
       {software.map(s => (
         <div class="software-card">
           <div class="card-header">
             <div class="logo-area">
-              <div class="logo-placeholder">{s.name.charAt(0)}</div>
+              <div class="logo-placeholder" style="background: {s.name === 'Buildium' ? '#1a1a2e' : s.name === 'AppFolio' ? '#2563eb' : s.name === 'HOAware' ? '#059669' : s.name === 'Perfect HOA' ? '#7c3aed' : s.name === 'LotWize' ? '#d97706' : '#374151'};">{s.name.charAt(0)}</div>
               <div>
                 <h3 style="font-size: 1.1rem; font-weight: 700; margin: 0;">{s.name}</h3>
                 <p style="font-size: 0.85rem; color: #6b7280;">{s.tagline}</p>
@@ -84,12 +149,21 @@ const pageDescription = `Find the best HOA management software for ${state.name}
             </div>
           </div>
           <div class="card-body">
-            <p style="font-size: 0.9rem; color: #374151;"><strong>Best for:</strong> {s.idealCustomer}</p>
-            <p style="font-size: 0.9rem; color: #374151;"><strong>Price:</strong> ${s.pricing.startingPrice}/mo</p>
+            <p style="font-size: 0.9rem; margin-bottom: 0.75rem;"><strong>Best for:</strong> {s.idealCustomer}</p>
+            <p style="font-size: 0.9rem; margin-bottom: 0.75rem;"><strong>Price:</strong> ${s.pricing.startingPrice}/mo</p>
+            <p style="font-size: 0.85rem; color: #6b7280;">
+              <strong>{state.name} compliance:</strong> {
+                s.features.reserveStudies ? '✅ Reserve study tracking' : '❌ No reserve module'
+              } &middot; {
+                s.features.voting ? '✅ Online voting' : '❌ No online voting'
+              } &middot; {
+                s.features.documentManagement ? '✅ Document management' : '❌ No document storage'
+              }
+            </p>
           </div>
           <div class="card-footer">
-            <a href={`/software/${s.slug}/`}>Read Review</a>
-            <a href={s.affiliateUrl} target="_blank" rel="nofollow sponsored noopener" class="cta-btn">Visit Site</a>
+            <a href={`/software/${s.slug}/`}>Read Full Review</a>
+            <a href={s.affiliateUrl} target="_blank" rel="nofollow sponsored noopener" class="cta-btn" aria-label={`Visit ${s.name} website`}>Visit Site</a>
           </div>
         </div>
       ))}
@@ -97,54 +171,71 @@ const pageDescription = `Find the best HOA management software for ${state.name}
   </section>
 
   <section>
-    <h2>{state.name}-Specific Compliance Features to Look For</h2>
-    <p>When choosing HOA software in {state.name}, prioritize these compliance-critical features:</p>
-    <ul>
-      <li><strong>Reserve Study Tracking:</strong> {state.reserveRequirements.includes('required') ? 'Required by state law — ensure your software supports reserve study scheduling and funding tracking.' : 'Recommended — helps maintain financial health even if not legally mandated.'}</li>
-      <li><strong>Meeting & Notice Automation:</strong> {state.meetingRequirements} — your software should support automated notices and quorum tracking.</li>
-      <li><strong>Voting Management:</strong> {state.votingThresholds} thresholds require reliable online voting systems with audit trails.</li>
-      {state.managementLicenseRequired && <li><strong>Management Licensing:</strong> Ensure your management team maintains required state certifications — some software offers compliance dashboards.</li>}
-    </ul>
+    <h2>Feature Comparison for {state.name} Compliance</h2>
+    <p>How the top platforms handle {state.name}-specific compliance requirements:</p>
+    <ComparisonTable software={software} compact />
   </section>
 
   <section>
-    <h2>Popular Software Used in {state.name}</h2>
-    <p>The most popular property management platforms among {state.name} associations include: {state.popularSoftware.join(', ')}. These tools are trusted by {state.name} managers for their compliance features and local support.</p>
+    <h2>Compliance-Critical Features for {state.name} Associations</h2>
+    <p>When evaluating software for your {state.name} association, prioritize these compliance-critical features:</p>
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; margin: 1.5rem 0;">
+      {Object.entries(complianceFeatureLabels).filter(([key]) => software.some(s => s.features[key])).slice(0, 6).map(([key, val]) => (
+        <div style="background: white; padding: 1rem; border-radius: 8px; border: 1px solid #e5e7eb;">
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+            <span style="color: #059669;">✓</span>
+            <strong>{val.feature}</strong>
+          </div>
+          <p style="font-size: 0.85rem; color: #6b7280; margin: 0;">{val.why}</p>
+        </div>
+      ))}
+    </div>
   </section>
 
   <section>
-    <h2>Related Resources</h2>
-    <ul>
-      <li><a href="/category/hoa/under-50-units/">Best HOA Software for Small Associations</a></li>
-      <li><a href="/category/hoa/50-200-units/">Best HOA Software for Growing Portfolios</a></li>
-      <li><a href="/category/hoa/200-500-units/">Best HOA Software for Established Portfolios</a></li>
-      <li><a href="/compare/buildium-vs-hoaware/">Buildium vs HOAware: Which HOA Software Wins?</a></li>
-    </ul>
+    <h2>Related Resources for {state.name} Associations</h2>
+    <div class="related-grid">
+      <div class="related-card"><a href="/resources/reserve-study-calculator/">Reserve Study Calculator</a></div>
+      <div class="related-card"><a href="/resources/migration-checklist/">Software Migration Checklist</a></div>
+      <div class="related-card"><a href="/category/hoa/under-50-units/">Best HOA Software Small</a></div>
+      <div class="related-card"><a href="/category/hoa/50-200-units/">Best HOA Software Medium</a></div>
+      <div class="related-card"><a href="/compare/buildium-vs-hoaware/">Buildium vs HOAware</a></div>
+    </div>
   </section>
 
   <section class="faq-section">
-    <h2>FAQ: HOA Compliance in {state.name}</h2>
-    <div class="faq-item">
-      <h4>What are the HOA laws in {state.name}?</h4>
-      <p>{state.name} associations are governed by {state.hoaLaws.join(' and ')}. Key statutes include {state.keyStatutes.join(', ')}. These laws cover formation, governance, and dispute resolution.</p>
-    </div>
-    <div class="faq-item">
-      <h4>Does {state.name} require HOA management licensing?</h4>
-      <p>{state.managementLicenseRequired ? 'Yes, community association managers in ' + state.name + ' must hold a valid state license.' : 'No, ' + state.name + ' does not require a state license for community association managers.'}</p>
-    </div>
-    <div class="faq-item">
-      <h4>What are the reserve study requirements in {state.name}?</h4>
-      <p>{state.reserveRequirements}</p>
-    </div>
-    <div class="faq-item">
-      <h4>What is the average HOA fee in {state.name}?</h4>
-      <p>The average HOA fee in {state.name} is <strong>{state.avgHoaFees}</strong>, though this varies significantly by location, amenities, and property type.</p>
-    </div>
+    <h2>Frequently Asked Questions About {state.name} HOA Compliance</h2>
+    {faqs.map(f => (
+      <div class="faq-item" itemscope itemtype="https://schema.org/Question">
+        <h4 itemprop="name">{f.question}</h4>
+        <div itemprop="acceptedAnswer" itemscope itemtype="https://schema.org/Answer">
+          <p itemprop="text">{f.answer}</p>
+        </div>
+      </div>
+    ))}
   </section>
 
   <section class="cta-section">
-    <h3>Find the Best HOA Software for Your {state.name} Association</h3>
-    <p>Compliance-ready software helps your association avoid costly legal issues. Start your free trial today.</p>
-    {software[0] && <a href={software[0].affiliateUrl} target="_blank" rel="nofollow sponsored noopener" class="cta-btn-large">Try {software[0].name} Free</a>}
+    <h3>Find {state.name}-Compliant Software Today</h3>
+    <p>Compare platforms that handle {state.name}'s unique regulatory requirements.</p>
+    <a href={software[0]?.affiliateUrl ?? '/category/hoa/under-50-units/'} target="_blank" rel="nofollow sponsored noopener" class="cta-btn-large">Try {software[0]?.name ?? 'Top Software'} Free &rarr;</a>
   </section>
 </BaseLayout>
+
+<style>
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1rem; margin: 1rem 0; }
+  .stat-card { background: white; padding: 1rem; border-radius: 8px; border: 1px solid #e5e7eb; text-align: center; }
+  .stat-value { font-size: 1.25rem; font-weight: 800; color: #1a1a2e; }
+  .stat-label { font-size: 0.8rem; color: #6b7280; margin-top: 0.25rem; }
+  .software-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+  .software-card { background: white; border-radius: 12px; border: 1px solid #e5e7eb; overflow: hidden; display: flex; flex-direction: column; }
+  .card-header { padding: 1.25rem; display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid #f0f0f0; }
+  .logo-area { display: flex; gap: 1rem; align-items: center; }
+  .logo-placeholder { width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1.25rem; flex-shrink: 0; }
+  .card-body { padding: 1.25rem; flex: 1; }
+  .card-footer { padding: 1rem 1.25rem; border-top: 1px solid #f0f0f0; display: flex; gap: 0.75rem; align-items: center; }
+  .cta-btn { margin-left: auto; padding: 0.5rem 1.25rem; background: #2563eb; color: white; border-radius: 6px; font-size: 0.85rem; font-weight: 600; transition: background 0.2s; text-decoration: none; }
+  .cta-btn:hover { background: #1d4ed8; text-decoration: none; }
+  .related-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem; margin: 1rem 0; }
+  .related-card { background: white; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid #e5e7eb; font-size: 0.9rem; text-align: center; }
+</style>
