@@ -1,0 +1,25 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@layouts/BaseLayout.astro';
+
+const features = await getCollection('feature');
+const featured = features.filter(f => f.data.featured);
+const rest = features.filter(f => !f.data.featured);
+---
+
+<BaseLayout title="مميزات برامج إدارة العيادات - كلينك سا" description="شروحات تفصيلية عن مميزات أنظمة إدارة العيادات: المواعيد، الملفات الطبية، التأمين، التقارير">
+  <main class="container" style="padding-top:var(--space-8);padding-bottom:var(--space-12);">
+    <h1>مميزات برامج العيادات</h1>
+    <p style="font-size:1.0625rem;color:var(--color-gray-500);margin-top:var(--space-2);">{features.length} ميزة مشروحة بالتفصيل</p>
+
+    <div style="margin-top:var(--space-6);display:grid;gap:var(--space-6);">
+      {[...featured, ...rest].map(f => (
+        <a href={`/features/${f.id}/`} class="card" style="display:block;color:inherit;">
+          <h3 style="margin:0;">{f.data.title}</h3>
+          <p style="margin-top:var(--space-1);color:var(--color-gray-500);font-size:0.9375rem;">{f.data.description}</p>
+          <span style="background:var(--color-gray-100);padding:var(--space-1) var(--space-3);border-radius:999px;font-size:0.8125rem;display:inline-block;margin-top:var(--space-2);">{f.data.category}</span>
+        </a>
+      ))}
+    </div>
+  </main>
+</BaseLayout>

@@ -1,0 +1,34 @@
+---
+export interface Props {
+  rating: number;
+  size?: 'sm' | 'md' | 'lg';
+}
+const { rating, size = 'md' } = Astro.props;
+const full = Math.floor(rating);
+const half = rating % 1 >= 0.5 ? 1 : 0;
+const empty = 5 - full - half;
+const stars = [
+  ...Array(full).fill('full'),
+  ...Array(half).fill('half'),
+  ...Array(empty).fill('empty'),
+];
+const sizeClass = size === 'sm' ? 'star-sm' : size === 'lg' ? 'star-lg' : 'star-md';
+---
+
+<span class={`stars ${sizeClass}`} aria-label={`${rating} من 5 نجوم`}>
+  {stars.map(s => <span class={`star star-${s}`} />)}
+  <span class="star-rating">{rating}/5</span>
+</span>
+
+<style>
+.stars { display: inline-flex; align-items: center; gap: 2px; }
+.star { display: inline-block; color: #f59e0b; }
+.star-full::before { content: "★"; }
+.star-half::before { content: "★"; position: relative; }
+.star-half::before { color: #f59e0b; clip-path: inset(0 50% 0 0); }
+.star-empty::before { content: "★"; color: var(--color-gray-200); }
+.star-sm { font-size: 0.875rem; }
+.star-md { font-size: 1rem; }
+.star-lg { font-size: 1.5rem; }
+.star-rating { font-size: 0.8125rem; color: var(--color-gray-500); margin-inline-start: var(--space-2); }
+</style>

@@ -1,0 +1,21 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import ReviewCard from '@components/ReviewCard.astro';
+
+const reviews = await getCollection('review');
+reviews.sort((a, b) => b.data.rating - a.data.rating);
+const featured = reviews.filter(r => r.data.featured);
+const rest = reviews.filter(r => !r.data.featured);
+---
+
+<BaseLayout title="جميع برامج إدارة العيادات - كلينك سا" description="مراجعات وشروحات لأفضل برامج إدارة العيادات في السعودية مع مقارنة الأسعار والمميزات">
+  <main class="container" style="padding-top:var(--space-8);padding-bottom:var(--space-12);">
+    <h1>جميع برامج إدارة العيادات</h1>
+    <p style="font-size:1.0625rem;color:var(--color-gray-500);margin-top:var(--space-2);">{reviews.length} برنامج تمت مراجعتها وتقييمها</p>
+
+    <div style="margin-top:var(--space-6);display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:var(--space-6);">
+      {reviews.map(r => <ReviewCard review={r} />)}
+    </div>
+  </main>
+</BaseLayout>

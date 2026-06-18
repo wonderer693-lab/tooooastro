@@ -1,0 +1,33 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@layouts/BaseLayout.astro';
+
+const typeLabels: Record<string, string> = {
+  glossary: "قاموس", faq: "أسئلة شائعة", template: "نموذج",
+  "case-study": "دراسة حالة", checklist: "قائمة تقييم", statistics: "إحصائيات",
+};
+
+export async function getStaticPaths() {
+  const resources = await getCollection('resource');
+  return resources.map(r => ({ params: { slug: r.id }, props: { resource: r } }));
+}
+
+const { resource } = Astro.props;
+const { data } = resource;
+const typeLabel = typeLabels[data.type] || data.type;
+---
+
+<BaseLayout title={`${data.title} - كلينك سا`} description={data.description}>
+  <main class="container" style="padding-top:var(--space-8);padding-bottom:var(--space-12);">
+    <a href="/resources/" style="font-size:0.875rem;color:var(--color-gray-500);">&larr; كل المصادر</a>
+
+    <div style="margin-top:var(--space-4);">
+      <h1>{data.title}</h1>
+      <span class="badge badge-primary" style="margin-top:var(--space-2);">{typeLabel}</span>
+    </div>
+
+    <article class="card" style="margin-top:var(--space-6);">
+      <div set:html={resource.body} />
+    </article>
+  </main>
+</BaseLayout>

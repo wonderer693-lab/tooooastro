@@ -1,0 +1,36 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import StarRating from '@components/StarRating.astro';
+
+const comparisons = await getCollection('comparison');
+const featured = comparisons.filter(c => c.data.featured);
+const rest = comparisons.filter(c => !c.data.featured);
+---
+
+<BaseLayout title="مقارنات برامج إدارة العيادات - كلينك سا" description="مقارنات شاملة بين أنظمة إدارة العيادات السعودية والعالمية لمساعدتك في اختيار الأفضل">
+  <main class="container" style="padding-top:var(--space-8);padding-bottom:var(--space-12);">
+    <h1>مقارنات برامج العيادات</h1>
+    <p style="font-size:1.0625rem;color:var(--color-gray-500);margin-top:var(--space-2);">{comparisons.length} مقارنة شاملة</p>
+
+    <div style="margin-top:var(--space-6);display:grid;gap:var(--space-6);">
+      {[...featured, ...rest].map(c => (
+        <a href={`/comparisons/${c.id}/`} class="card" style="display:block;color:inherit;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:var(--space-4);">
+            <div>
+              <h3 style="margin:0;">{c.data.title}</h3>
+              <p style="margin-top:var(--space-1);color:var(--color-gray-500);font-size:0.9375rem;">{c.data.description}</p>
+            </div>
+            {c.data.featured && <span class="badge badge-primary">مقارنة مميزة</span>}
+          </div>
+          <div style="display:flex;gap:var(--space-3);margin-top:var(--space-3);flex-wrap:wrap;">
+            {c.data.tools.map(t => <span style="background:var(--color-gray-100);padding:var(--space-1) var(--space-3);border-radius:999px;font-size:0.8125rem;">{t}</span>)}
+          </div>
+          <div style="margin-top:var(--space-3);font-size:0.875rem;color:var(--color-primary);font-weight:500;">
+            الفائز: {c.data.winner}
+          </div>
+        </a>
+      ))}
+    </div>
+  </main>
+</BaseLayout>

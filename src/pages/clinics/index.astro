@@ -1,0 +1,23 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@layouts/BaseLayout.astro';
+
+const categories = await getCollection('category');
+---
+
+<BaseLayout title="تصنيفات برامج إدارة العيادات - كلينك سا" description="تصفح برامج إدارة العيادات حسب النوع والميزانية والمتطلبات">
+  <main class="container" style="padding-top:var(--space-8);padding-bottom:var(--space-12);">
+    <h1>تصنيفات برامج العيادات</h1>
+    <p style="font-size:1.0625rem;color:var(--color-gray-500);margin-top:var(--space-2);">{categories.length} تصنيف</p>
+
+    <div style="margin-top:var(--space-6);display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:var(--space-6);">
+      {categories.map(c => (
+        <a href={`/clinics/${c.id}/`} class="card" style="display:block;color:inherit;">
+          <div style="font-size:2rem;margin-bottom:var(--space-2);">{c.data.icon}</div>
+          <h3 style="margin:0;">{c.data.title}</h3>
+          <p style="margin-top:var(--space-1);color:var(--color-gray-500);font-size:0.9375rem;">{c.data.description}</p>
+        </a>
+      ))}
+    </div>
+  </main>
+</BaseLayout>

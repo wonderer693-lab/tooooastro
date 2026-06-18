@@ -1,0 +1,42 @@
+---
+const navItems = [
+  { href: "/", label: "الرئيسية" },
+  { href: "/software/", label: "البرامج" },
+  { href: "/comparisons/", label: "مقارنات" },
+  { href: "/guides/", label: "أدلة الشراء" },
+  { href: "/features/", label: "المميزات" },
+  { href: "/clinics/", label: "التصنيفات" },
+];
+---
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="/" class="logo">كلينك سا</a>
+    <nav class="nav" aria-label="القائمة الرئيسية">
+      <ul class="nav-list">
+        {navItems.map(item => (
+          <li><a href={item.href}>{item.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+    <a href="/comparisons/" class="btn btn-primary btn-sm">قارن البرامج</a>
+  </div>
+</header>
+
+<style>
+.site-header {
+  position: sticky; top: 0; z-index: 50;
+  background: var(--color-white); border-bottom: 1px solid var(--color-gray-200);
+  padding: var(--space-3) 0;
+}
+.header-inner { display: flex; align-items: center; gap: var(--space-6); }
+.logo { font-size: 1.25rem; font-weight: 800; color: var(--color-primary); }
+.nav { flex: 1; }
+.nav-list { list-style: none; display: flex; gap: var(--space-5); padding: 0; margin: 0; }
+.nav-list a { color: var(--color-gray-600); font-size: 0.9375rem; font-weight: 500; }
+.nav-list a:hover { color: var(--color-primary); }
+.btn-sm { padding: var(--space-2) var(--space-4); font-size: 0.875rem; }
+@media (max-width: 768px) {
+  .nav { display: none; }
+}
+</style>

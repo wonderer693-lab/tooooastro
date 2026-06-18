@@ -1,0 +1,30 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const guides = await getCollection('guide');
+  return guides.map(g => ({ params: { slug: g.id }, props: { guide: g } }));
+}
+
+const { guide } = Astro.props;
+const { data } = guide;
+---
+
+<BaseLayout title={`${data.title} - كلينك سا`} description={data.description}>
+  <main class="container" style="padding-top:var(--space-8);padding-bottom:var(--space-12);">
+    <a href="/guides/" style="font-size:0.875rem;color:var(--color-gray-500);">&larr; كل الأدلة</a>
+
+    <div style="margin-top:var(--space-4);">
+      <h1>{data.title}</h1>
+      <div style="display:flex;gap:var(--space-4);margin-top:var(--space-2);flex-wrap:wrap;">
+        <span class="badge badge-primary">{data.category}</span>
+        <span style="font-size:0.875rem;color:var(--color-gray-500);">وقت القراءة: {data.readingTime}</span>
+      </div>
+    </div>
+
+    <article class="card" style="margin-top:var(--space-6);">
+      <div set:html={guide.body} />
+    </article>
+  </main>
+</BaseLayout>

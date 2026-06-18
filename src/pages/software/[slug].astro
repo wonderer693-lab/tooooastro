@@ -1,0 +1,64 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import StarRating from '@components/StarRating.astro';
+import { getAffiliateUrl } from '@lib/affiliates';
+
+export async function getStaticPaths() {
+  const reviews = await getCollection('review');
+  return reviews.map(r => ({ params: { slug: r.id }, props: { review: r } }));
+}
+
+const { review } = Astro.props;
+const { data } = review;
+const slug = review.id;
+---
+
+<BaseLayout title={`${data.title} - كلينك سا`} description={data.description}>
+  <main class="container" style="padding-top:var(--space-8);padding-bottom:var(--space-12);">
+    <a href="/software/" style="font-size:0.875rem;color:var(--color-gray-500);">&larr; كل البرامج</a>
+
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:var(--space-6);margin-top:var(--space-4);flex-wrap:wrap;">
+      <div>
+        <h1>{data.title}</h1>
+        <p style="font-size:1.0625rem;color:var(--color-gray-500);margin-top:var(--space-2);">{data.description}</p>
+        <div style="display:flex;align-items:center;gap:var(--space-4);margin-top:var(--space-3);flex-wrap:wrap;">
+          <StarRating rating={data.rating} size="lg" />
+          <span class="badge badge-primary">{data.bestFor}</span>
+          <span style="font-weight:700;color:var(--color-primary);">{data.priceRange}</span>
+        </div>
+      </div>
+      <a href={getAffiliateUrl(slug)} class="btn btn-primary btn-lg" target="_blank" rel="noopener sponsored">زيارة الموقع الرسمي</a>
+    </div>
+
+    <div style="display:grid;grid-template-columns:2fr 1fr;gap:var(--space-8);margin-top:var(--space-8);">
+      <article class="card">
+        <div set:html={review.body} />
+      </article>
+
+      <aside style="display:flex;flex-direction:column;gap:var(--space-6);">
+        <div class="card">
+          <h3>المميزات</h3>
+          <ul>{data.keyFeatures.map(f => <li>{f}</li>)}</ul>
+        </div>
+
+        <div class="card">
+          <h3>المميزات</h3>
+          <ul style="color:var(--color-green);">{data.pros.map(p => <li>{p}</li>)}</ul>
+        </div>
+
+        <div class="card">
+          <h3>العيوب</h3>
+          <ul style="color:var(--color-red);">{data.cons.map(c => <li>{c}</li>)}</ul>
+        </div>
+
+        <div class="card">
+          <h3>التكاملات</h3>
+          <div style="display:flex;flex-wrap:wrap;gap:var(--space-2);">
+            {data.integrations.map(i => <span style="background:var(--color-gray-100);padding:var(--space-1) var(--space-3);border-radius:999px;font-size:0.8125rem;">{i}</span>)}
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+</BaseLayout>

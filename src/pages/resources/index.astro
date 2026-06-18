@@ -1,0 +1,32 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@layouts/BaseLayout.astro';
+
+const typeLabels: Record<string, string> = {
+  glossary: "قاموس", faq: "أسئلة شائعة", template: "نموذج",
+  "case-study": "دراسة حالة", checklist: "قائمة تقييم", statistics: "إحصائيات",
+};
+
+const resources = await getCollection('resource');
+---
+
+<BaseLayout title="مصادر برامج إدارة العيادات - كلينك سا" description="قاموس مصطلحات، أسئلة شائعة، وقوائم تقييم لمساعدتك في اختيار برنامج العيادات المناسب">
+  <main class="container" style="padding-top:var(--space-8);padding-bottom:var(--space-12);">
+    <h1>مصادر</h1>
+    <p style="font-size:1.0625rem;color:var(--color-gray-500);margin-top:var(--space-2);">{resources.length} مصدر</p>
+
+    <div style="margin-top:var(--space-6);display:grid;gap:var(--space-6);">
+      {resources.map(r => (
+        <a href={`/resources/${r.id}/`} class="card" style="display:block;color:inherit;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:var(--space-4);">
+            <div>
+              <h3 style="margin:0;">{r.data.title}</h3>
+              <p style="margin-top:var(--space-1);color:var(--color-gray-500);font-size:0.9375rem;">{r.data.description}</p>
+            </div>
+            <span class="badge badge-primary">{typeLabels[r.data.type] || r.data.type}</span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </main>
+</BaseLayout>

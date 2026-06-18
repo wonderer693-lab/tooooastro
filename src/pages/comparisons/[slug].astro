@@ -1,0 +1,35 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const comparisons = await getCollection('comparison');
+  return comparisons.map(c => ({ params: { slug: c.id }, props: { comparison: c } }));
+}
+
+const { comparison } = Astro.props;
+const { data } = comparison;
+---
+
+<BaseLayout title={`${data.title} - كلينك سا`} description={data.description}>
+  <main class="container" style="padding-top:var(--space-8);padding-bottom:var(--space-12);">
+    <a href="/comparisons/" style="font-size:0.875rem;color:var(--color-gray-500);">&larr; كل المقارنات</a>
+
+    <h1 style="margin-top:var(--space-4);">{data.title}</h1>
+    <p style="font-size:1.0625rem;color:var(--color-gray-500);">{data.description}</p>
+
+    <div style="display:flex;gap:var(--space-4);margin-top:var(--space-4);flex-wrap:wrap;">
+      {data.tools.map(t => <span class="badge badge-primary">{t}</span>)}
+      <span style="font-size:0.875rem;color:var(--color-gray-500);">التصنيف: {data.category}</span>
+    </div>
+
+    <div class="card" style="margin-top:var(--space-6);background:var(--color-green);color:var(--color-white);padding:var(--space-4);">
+      <strong>الفائز: {data.winner}</strong>
+      <p style="color:var(--color-white);margin:0;font-size:0.9375rem;">{data.winnerReason}</p>
+    </div>
+
+    <article class="card" style="margin-top:var(--space-6);">
+      <div set:html={comparison.body} />
+    </article>
+  </main>
+</BaseLayout>
