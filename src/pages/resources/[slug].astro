@@ -1,6 +1,9 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '@layouts/BaseLayout.astro';
+import Breadcrumbs from '@components/Breadcrumbs.astro';
+import FAQSchema from '@components/FAQSchema.astro';
+import { getResourceFaqs } from '@lib/faq-content';
 
 const typeLabels: Record<string, string> = {
   glossary: "قاموس", faq: "أسئلة شائعة", template: "نموذج",
@@ -15,11 +18,18 @@ export async function getStaticPaths() {
 const { resource } = Astro.props;
 const { data } = resource;
 const typeLabel = typeLabels[data.type] || data.type;
+const faqQuestions = data.type === 'faq' ? getResourceFaqs(resource.id) : [];
 ---
 
 <BaseLayout title={`${data.title} - كلينك سا`} description={data.description}>
+  {faqQuestions.length > 0 && <FAQSchema questions={faqQuestions} />}
+
   <main class="container" style="padding-top:var(--space-8);padding-bottom:var(--space-12);">
-    <a href="/resources/" style="font-size:0.875rem;color:var(--color-gray-500);">&larr; كل المصادر</a>
+    <Breadcrumbs items={[
+      { label: 'الرئيسية', href: '/' },
+      { label: 'المصادر', href: '/resources/' },
+      { label: data.title }
+    ]} />
 
     <div style="margin-top:var(--space-4);">
       <h1>{data.title}</h1>

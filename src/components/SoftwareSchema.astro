@@ -1,0 +1,32 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+type Review = CollectionEntry<'review'>;
+
+export interface Props {
+  review: Review;
+}
+
+const { review } = Astro.props;
+const { data, id } = review;
+const url = `${Astro.url.origin}/software/${id}/`;
+---
+
+<script type="application/ld+json" set:html={JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": data.title,
+  "operatingSystem": "Web",
+  "applicationCategory": "Medical Business",
+  "description": data.description,
+  "url": url,
+  "sameAs": [],
+  "offers": {
+    "@type": "Offer",
+    "price": data.priceRange,
+    "priceCurrency": "SAR",
+    "availability": "https://schema.org/InStock"
+  },
+  "featureList": data.keyFeatures,
+  "releaseNotes": undefined
+})} />

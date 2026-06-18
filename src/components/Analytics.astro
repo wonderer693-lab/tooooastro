@@ -1,0 +1,31 @@
+---
+const GA_ID = import.meta.env.PUBLIC_GA_ID;
+const origin = Astro.url.origin;
+---
+
+{GA_ID && (
+  <>
+    <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} />
+    <script is:inline set:html={`
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '${GA_ID}', { anonymize_ip: true });
+      gtag('set', 'content_group', 'clinic-sa-site');
+    `} />
+  </>
+)}
+
+<script is:inline set:html={`
+  window.clinicSa = window.clinicSa || {};
+  window.clinicSa.origin = '${origin}';
+  window.clinicSa.trackClick = function(productId) {
+    if (typeof gtag !== 'undefined') {
+      gtag('event', 'affiliate_click', {
+        product_id: productId,
+        event_category: 'affiliate',
+        event_label: productId
+      });
+    }
+  };
+`} />

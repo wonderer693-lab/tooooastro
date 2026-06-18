@@ -1,6 +1,8 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '@layouts/BaseLayout.astro';
+import Breadcrumbs from '@components/Breadcrumbs.astro';
+import FAQSchema from '@components/FAQSchema.astro';
 
 export async function getStaticPaths() {
   const guides = await getCollection('guide');
@@ -12,8 +14,17 @@ const { data } = guide;
 ---
 
 <BaseLayout title={`${data.title} - كلينك سا`} description={data.description}>
+  <FAQSchema questions={[
+    { q: data.title, a: data.description },
+    { q: `ما هو ${data.title}؟`, a: `${data.title} هو دليل يساعدك في ${data.description}` },
+  ]} />
+
   <main class="container" style="padding-top:var(--space-8);padding-bottom:var(--space-12);">
-    <a href="/guides/" style="font-size:0.875rem;color:var(--color-gray-500);">&larr; كل الأدلة</a>
+    <Breadcrumbs items={[
+      { label: 'الرئيسية', href: '/' },
+      { label: 'الأدلة', href: '/guides/' },
+      { label: data.title }
+    ]} />
 
     <div style="margin-top:var(--space-4);">
       <h1>{data.title}</h1>

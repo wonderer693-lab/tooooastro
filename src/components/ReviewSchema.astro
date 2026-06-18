@@ -1,0 +1,67 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+type Review = CollectionEntry<'review'>;
+
+export interface Props {
+  review: Review;
+}
+
+const { review } = Astro.props;
+const { data, id } = review;
+const url = `${Astro.url.origin}/software/${id}/`;
+---
+
+<script type="application/ld+json" set:html={JSON.stringify([{
+  "@context": "https://schema.org",
+  "@type": "Review",
+  "itemReviewed": {
+    "@type": "SoftwareApplication",
+    "name": data.title,
+    "applicationCategory": "Medical Business",
+    "description": data.description,
+    "offers": {
+      "@type": "Offer",
+      "price": data.priceRange,
+      "priceCurrency": "SAR"
+    },
+    "featureList": data.keyFeatures.map(f => f.split("—")[0].trim())
+  },
+  "author": {
+    "@type": "Organization",
+    "name": "كلينك سا",
+    "url": Astro.url.origin
+  },
+  "datePublished": data.pubDate.toISOString().split("T")[0],
+  "reviewRating": {
+    "@type": "Rating",
+    "ratingValue": data.rating,
+    "bestRating": "5",
+    "worstRating": "1"
+  },
+  "reviewBody": data.description,
+  "publisher": {
+    "@type": "Organization",
+    "name": "كلينك سا"
+  }
+}, {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": data.title,
+  "description": data.description,
+  "brand": { "@type": "Brand", "name": data.title.split("—")[0].trim() },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": data.rating,
+    "bestRating": "5",
+    "worstRating": "1",
+    "ratingCount": 1
+  },
+  "offers": {
+    "@type": "AggregateOffer",
+    "priceCurrency": "SAR",
+    "lowPrice": data.priceRange.split("–")[0].replace(/[^0-9]/g, ""),
+    "highPrice": data.priceRange.includes("–") ? data.priceRange.split("–")[1].replace(/[^0-9]/g, "") : undefined,
+    "offerCount": 1
+  }
+}])} />

@@ -2,6 +2,9 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '@layouts/BaseLayout.astro';
 import StarRating from '@components/StarRating.astro';
+import Breadcrumbs from '@components/Breadcrumbs.astro';
+import ReviewSchema from '@components/ReviewSchema.astro';
+import SoftwareSchema from '@components/SoftwareSchema.astro';
 import { getAffiliateUrl } from '@lib/affiliates';
 
 export async function getStaticPaths() {
@@ -15,8 +18,15 @@ const slug = review.id;
 ---
 
 <BaseLayout title={`${data.title} - كلينك سا`} description={data.description}>
+  <ReviewSchema review={review} />
+  <SoftwareSchema review={review} />
+
   <main class="container" style="padding-top:var(--space-8);padding-bottom:var(--space-12);">
-    <a href="/software/" style="font-size:0.875rem;color:var(--color-gray-500);">&larr; كل البرامج</a>
+    <Breadcrumbs items={[
+      { label: 'الرئيسية', href: '/' },
+      { label: 'البرامج', href: '/software/' },
+      { label: data.title }
+    ]} />
 
     <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:var(--space-6);margin-top:var(--space-4);flex-wrap:wrap;">
       <div>
@@ -28,7 +38,7 @@ const slug = review.id;
           <span style="font-weight:700;color:var(--color-primary);">{data.priceRange}</span>
         </div>
       </div>
-      <a href={getAffiliateUrl(slug)} class="btn btn-primary btn-lg" target="_blank" rel="noopener sponsored">زيارة الموقع الرسمي</a>
+      <a href={getAffiliateUrl(slug)} class="btn btn-primary btn-lg" target="_blank" rel="noopener sponsored" onclick={`window.clinicSa?.trackClick('${slug}')`}>زيارة الموقع الرسمي</a>
     </div>
 
     <div style="display:grid;grid-template-columns:2fr 1fr;gap:var(--space-8);margin-top:var(--space-8);">
@@ -38,7 +48,7 @@ const slug = review.id;
 
       <aside style="display:flex;flex-direction:column;gap:var(--space-6);">
         <div class="card">
-          <h3>المميزات</h3>
+          <h3>المميزات الأساسية</h3>
           <ul>{data.keyFeatures.map(f => <li>{f}</li>)}</ul>
         </div>
 
