@@ -26,6 +26,7 @@ export default defineConfig({
         '@components': resolve(__dirname, 'src/components'),
         '@layouts': resolve(__dirname, 'src/layouts'),
         '@content': resolve(__dirname, 'src/content'),
+        '@data': resolve(__dirname, 'src/data'),
       },
     },
   },

@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '@layouts/BaseLayout.astro';
 import Breadcrumbs from '@components/Breadcrumbs.astro';
+import ComparisonTable from '@components/ComparisonTable.astro';
 
 export async function getStaticPaths() {
   const comparisons = await getCollection('comparison');
@@ -36,5 +37,24 @@ const { data } = comparison;
     <article class="card" style="margin-top:var(--space-6);">
       <div set:html={comparison.body} />
     </article>
+
+    {data.tools.length >= 2 && (
+      <section style="margin-top:var(--space-10);">
+        <h2>جدول مقارنة المميزات</h2>
+        <div style="margin-top:var(--space-4);">
+          <ComparisonTable products={data.tools.map(t => {
+            const slugMap: Record<string, string> = {
+              "رعاية بلس": "riaya-plus", "غين": "gain", "كلينيكي": "clinicy",
+              "أثير": "athir", "سلس": "sals-erp", "غايات": "ghayat",
+              "إي كير بلاس": "ecare-plus", "ميدينوس": "medinous",
+              "SimplePractice": "simplepractice", "Cliniko": "cliniko",
+              "DrChrono": "drchrono", "Tebra": "tebra",
+              "برامج سحابية": "clinicy", "برامج محلية": "athir",
+            };
+            return slugMap[t] || t;
+          })} />
+        </div>
+      </section>
+    )}
   </main>
 </BaseLayout>

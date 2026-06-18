@@ -1,0 +1,56 @@
+---
+import { specCategories, productSpecs, getProductName } from '@data/comparison-specs';
+
+export interface Props {
+  products: string[];
+}
+
+const { products } = Astro.props;
+---
+
+<div class="spec-table-wrapper">
+  <table class="spec-table">
+    <thead>
+      <tr>
+        <th>الميزة</th>
+        {products.map(id => <th>{getProductName(id)}</th>)}
+      </tr>
+    </thead>
+    <tbody>
+      {specCategories.map(cat => (
+        <>
+          <tr class="spec-category-row">
+            <td colspan={products.length + 1}><strong>{cat.category}</strong></td>
+          </tr>
+          {cat.items.map(item => {
+            const values = products.map(id => productSpecs[id]?.[item.key]);
+            return (
+              <tr>
+                <td>{item.feature}</td>
+                {values.map(v => {
+                  if (v === true) return <td class="spec-yes" aria-label="نعم">✓</td>;
+                  if (v === false) return <td class="spec-no" aria-label="لا">✗</td>;
+                  if (typeof v === 'string') return <td class="spec-text" aria-label={v}>{v}</td>;
+                  return <td class="spec-na">—</td>;
+                })}
+              </tr>
+            );
+          })}
+        </>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+<style>
+.spec-table-wrapper { overflow-x: auto; }
+.spec-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+.spec-table th, .spec-table td { padding: var(--space-3) var(--space-4); text-align: center; white-space: nowrap; border-bottom: 1px solid var(--color-gray-200); }
+.spec-table th { background: var(--color-gray-50); font-weight: 700; color: var(--color-gray-700); }
+.spec-table td:first-child { text-align: right; font-weight: 500; white-space: normal; }
+.spec-category-row td { background: var(--color-gray-100); font-weight: 700; color: var(--color-gray-800); text-align: right; }
+.spec-yes { color: var(--color-green); font-weight: bold; font-size: 1rem; }
+.spec-no { color: var(--color-red); font-weight: bold; font-size: 1rem; }
+.spec-text { color: var(--color-amber); font-size: 0.8125rem; }
+.spec-na { color: var(--color-gray-300); }
+</style>
